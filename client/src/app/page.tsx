@@ -3,19 +3,18 @@
 import QuillEditor from "../components/quill/QuillEditor"
 import React, { useState } from 'react';
 import SideBar from "../components/SideBar"
+import AiSideBar from "@/components/aiSideBar";
 
-interface allDocs {
-  fileId: string,
-  fileContent: JSON,
-  lastUpdated: Date
-}
+
+// interface allDocs {
+//   fileId: string,
+//   fileContent: JSON,
+//   lastUpdated: Date
+// }
 
 const MainComponent = () => {
 
-  //maintain states of the current user
-  //TODO get files for given user and show them
-  //pass list of files
-  const [files, setFiles] = useState<string[]>(['file1', 'file2']); // Initial files (notes)
+  const files = Object.keys(localStorage)
   //current file - last used 
   const [currentFile, setCurrentFile] = useState('file1');
 
@@ -28,14 +27,20 @@ const MainComponent = () => {
   return (
     <div className="app flex">
       <div className="w-1/5">
-        <SideBar files={files} onFileSelect={setChoosenFile} />
+        <SideBar
+          initialFiles={files}
+          onFileSelect={setChoosenFile}
+        />
       </div>
-      <div className="h-screen w-4/5">
+      <div className="w-3/5 h-full">
         <QuillEditor
           currentFile={currentFile} //const props
           // onTextChange={notesTextChange} // a method props
           className="my-custom-quill-class"
         />
+      </div>
+      <div className="w-1/5">
+        <AiSideBar />
       </div>
     </div>
 
