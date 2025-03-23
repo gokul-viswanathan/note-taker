@@ -25,3 +25,63 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   font-size: medium;
 }
+
+/* Quill editor styles */
+
+.ql-container {
+  border: none !important;
+}
+
+.ql-toolbar {
+  border: none !important;
+}
+
+.editor-properties {
+  @apply h-screen w-5/10 bg-black border-solid text-zinc-200
+}
+
+.editor-properties > .ql-container {
+  height: 93vh;
+}
+
+.quill > * {
+  border-color: inherit !important;
+  color: inherit !important;
+}
+
+.quill > .ql-container {
+  /* border radius of the container and for font size*/
+  font-size: inherit;
+  /* border-radius: 0 0 10px 10px; */
+}
+.ql-toolbar.ql-snow .ql-picker-label {
+  color: inherit !important;
+  opacity: 0.76;
+}
+.ql-snow .ql-picker {
+  color: inherit !important;
+}
+.quill > .ql-container > .ql-editor.ql-blank::before {
+  /* for placeholder */
+   color: inherit; 
+}
+.ql-snow.ql-toolbar button svg {
+  opacity: 0.76;
+  color: currentColor;
+}
+.ql-snow .ql-stroke {
+  /* for the border of the editor */
+  stroke: currentColor !important;
+}
+.ql-snow .ql-fill {
+  /* for the bg color */
+  fill: currentColor !important;
+}
+.ql-picker-item {
+  /* for dropdown */
+  color: #444 !important;
+}
+
+.ql-editor {
+  font-size: 14px !important; /* Change to your desired size */
+}
