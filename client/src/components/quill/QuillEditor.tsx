@@ -50,6 +50,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 		const quill = quillInstanceRef.current;
 		const handleTextChange = () => {
 			localStorage.setItem(currentFile, JSON.stringify(quill.getContents().ops));
+			console.log(JSON.stringify(quill.getContents().ops))
 		};
 		quill.on('text-change', handleTextChange);
 
