@@ -8,7 +8,7 @@ interface Message {
    sender: string;
  }
 
-const AiSideBar = ({ currentFile }) => {
+const AiSideBar: React.FC<{currentFile:string}> = ({ currentFile }) => {
 
    //get AI chat history based on this file
    //if nothing is there set the below mwssage
@@ -37,7 +37,6 @@ const AiSideBar = ({ currentFile }) => {
    //  const [selectedFile, setSelectedFile] = useState(null);
 
    function handleAsk() {
-      console.log("Ai button has been clicked")
       setMessages(prevMessages => [...prevMessages, { id: Date.now(), text: input, sender: "user" }]);
       if (input) {
          apiCall(input)
