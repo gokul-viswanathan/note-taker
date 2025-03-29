@@ -3,52 +3,43 @@ import React, { useEffect, useState } from 'react';
 
 type SidebarProps = {
    initialFiles: string[];
-   updateFileList: (file: string) => void;
+   updateFileList: (file: string[]) => void;
    onFileSelect: (file: string) => void;
    currentFile: string;
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ initialFiles, updateFileList, onFileSelect, currentFile }) => {
-   // const [files, setFiles] = useState(initialFiles);
    const [isVisible, setIsVisible] = useState(true);
    const [newFileName, setNewFileName] = useState('');
    const [isAddNewFile, setIsAddNewFile] = useState(false);
-
-   // console.log("within sidebar -> current files ", initialFiles);
 
    // Add a new file
    const isAddFile = () => {
       setIsAddNewFile(!isAddNewFile)
    };
 
-   // useEffect(() => {
-   //    console.log("there is a change in file ", initialFiles)
-   // }, [initialFiles])
+   const cancelAddingFile = () => {
+      setNewFileName('')
+      setIsAddNewFile(!isAddNewFile)
+   };
 
    const saveNewFile = () => {
       if (newFileName.trim() !== '') {
          const updatedFileName = "ntf~" + newFileName.trim()
-         // setFiles([...files, updatedFileName]);
-         updateFileList(updatedFileName)
+         updateFileList([...initialFiles, updatedFileName])
          setNewFileName('');
          onFileSelect(updatedFileName)
          setIsAddNewFile(!isAddNewFile)
       }
    }
 
-   const cancelAddingFile = () => {
-      setNewFileName('')
-      setIsAddNewFile(!isAddNewFile)
-   }
-
-   // Delete a file
-   // const deleteFile = (index: number, e: React.MouseEvent<HTMLButtonElement, MouseEvent>, file: string) => {
-   //    e.stopPropagation(); // Prevent triggering the parent onClick
-   //    const updatedFiles = [...files];
-   //    updatedFiles.splice(index, 1);
-   //    setFiles(updatedFiles);
-   //    localStorage.removeItem(file)
-   // };
+   const deleteFile = (index: number, e: React.MouseEvent<HTMLButtonElement, MouseEvent>, file: string) => {
+      e.stopPropagation(); // Prevent triggering the parent onClick
+      const updateFiles = [...initialFiles];
+      updateFiles.splice(index, 1);
+      updateFileList(updateFiles);
+      localStorage.removeItem(file)
+   };
 
    return (
       <>
@@ -91,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({ initialFiles, updateFileList, onFileS
                                  <span className="ms-3">{file.split("~")[1]}</span>
                               </a>
                               <button
-                                 // onClick={(e) => deleteFile(index, e, file)}
+                                 onClick={(e) => deleteFile(index, e, file)}
                                  className="p-1 text-[#DCD7C9] hover:text-red-700"
                                  aria-label={`Delete ${file}`}
                               >
@@ -111,7 +102,6 @@ const Sidebar: React.FC<SidebarProps> = ({ initialFiles, updateFileList, onFileS
                                  type="text"
                                  value={newFileName}
                                  onChange={(e) => setNewFileName(e.target.value)}
-                                 //   onKeyDown={handleKeyPress}
                                  placeholder="Enter file name"
                                  className="ms-3 bg-transparent border-b border-gray-500 focus:outline-none focus:border-blue-500 w-full"
                                  autoFocus

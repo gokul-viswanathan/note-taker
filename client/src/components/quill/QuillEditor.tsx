@@ -32,7 +32,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 	}, []);
 
 	useEffect(() => {
-		console.log("the content setting method ", quillInstance)
 		if (currentFile) {
 			const currentFileValues = localStorage.getItem(currentFile);
 			if (currentFileValues) {
@@ -46,7 +45,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 	}, [currentFile, quillInstance])
 
 	useEffect(() => {
-		// const quill = quillInstance;
 		const handleTextChange = () => {
 			localStorage.setItem(currentFile, JSON.stringify(quillInstance?.getContents().ops));
 		};

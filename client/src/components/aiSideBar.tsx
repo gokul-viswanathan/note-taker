@@ -28,7 +28,6 @@ const AiSideBar: React.FC<{currentFile:string}> = ({ currentFile }) => {
             setMessages([{ id: 1, text: "Hello! How can I assist you today?", sender: "bot" }]);
          }
       }else{
-         console.log("No previous meassages")
          setMessages([{ id: 1, text: "Hello! How can I assist you today?", sender: "bot" }])
       }
    }, [currentFile])

@@ -23,17 +23,13 @@ const MainComponent = () => {
     setFiles(loadedFiles);
   }, [])
 
-  // useEffect(() => {
-  //   console.log("in the main page ", files)
-  // }, [files])
-
   const [currentFile, setCurrentFile] = useState(theGuide);
   function setChoosenFile(content: string) {
     setCurrentFile(content)
   }
 
-  function updateListOfFiles(newFile: string){
-    setFiles(files => [...files, newFile])
+  function updateListOfFiles(newFileList: string[]){
+    setFiles(newFileList)
   }
 
   return (
