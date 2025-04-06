@@ -5,7 +5,7 @@
 
 ## 🚀 Live Demo
 
-Check out the app here: [https://your-app-link.com](https://your-app-link.com)
+Check out the app here: [https://my-notes-app-274145596589.us-central1.run.app/](Web-app)
 
 Welcome to **Thought Ink** – a lightweight, privacy-focused note-taking app with built-in AI assistance. Designed as a learning project, Thought Ink helps you take structured notes (with headings, bullet points, etc.), store them locally in your browser, and ask AI questions based on your content – all without sending your data to any server.
 
