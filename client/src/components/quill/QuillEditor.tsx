@@ -31,6 +31,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 		})
 	}, []);
 
+	// current file change handling
 	useEffect(() => {
 		if (currentFile) {
 			const currentFileValues = localStorage.getItem(currentFile);
@@ -44,12 +45,13 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 		}
 	}, [currentFile, quillInstance])
 
+	// change listenet within quill
 	useEffect(() => {
 		const handleTextChange = () => {
 			localStorage.setItem(currentFile, JSON.stringify(quillInstance?.getContents().ops));
 		};
 		quillInstance?.on('text-change', handleTextChange);
-
+		// quillInstance?.on('se', handleTextChange);
 		return () => {
 			quillInstance?.off('text-change', handleTextChange);
 		};
