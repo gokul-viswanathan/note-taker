@@ -15,7 +15,7 @@ const AiSideBar: React.FC<{currentFile:string}> = ({ currentFile }) => {
    //it should take effect every time the file changes
 
    const [messages, setMessages] = useState<Message[]>([]);
-
+   const [input, setInput] = useState("");
    // { id: 1, text: "Hello! How can I assist you today?", sender: "bot" }
    useEffect(() => {
       const currentAIPrevChat = localStorage.getItem("chatAi"+currentFile);
@@ -32,13 +32,13 @@ const AiSideBar: React.FC<{currentFile:string}> = ({ currentFile }) => {
       }
    }, [currentFile])
   
-   const [input, setInput] = useState("");
    //  const [selectedFile, setSelectedFile] = useState(null);
 
    function handleAsk() {
       setMessages(prevMessages => [...prevMessages, { id: Date.now(), text: input, sender: "user" }]);
       if (input) {
-         apiCall(input)
+			const currentFileValues = localStorage.getItem(currentFile);
+         apiCall(currentFileValues + "\n" + input)
             .then(aiOutput => {
                if (aiOutput !== null) {
                   setMessages(prevMessages => {
