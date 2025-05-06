@@ -1,12 +1,27 @@
-import { GoogleGenerativeAI } from "@google/generative-ai"
+export async function apiCall(data: string, prompt: string): Promise<string> {
+    const baseUrl = "http://localhost:8080/airesponse"
 
-const apiKey = "AIzaSyBFQHB-gk1fzczz1iRMypRQNwd-7FXpZLg"
+    const params = {
+        context: data,
+        question: prompt
+    };
 
-const genAI = new GoogleGenerativeAI(apiKey);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Construct query string
+    const queryString = new URLSearchParams(params).toString();
+    const url = `${baseUrl}?${queryString}`;
 
-export async function apiCall(prompt:string) {
-    const result = await model.generateContent(prompt);
-    return result.response.text()
+    console.log("the model is called with url ", url);
+    return fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            console.log("the response from ai is ", response);
+            return response.text(); // Parse JSON response)
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            throw error;
+          });
 }
 
