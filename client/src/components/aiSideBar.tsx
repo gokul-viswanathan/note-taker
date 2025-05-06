@@ -36,9 +36,9 @@ const AiSideBar: React.FC<{currentFile:string}> = ({ currentFile }) => {
 
    function handleAsk() {
       setMessages(prevMessages => [...prevMessages, { id: Date.now(), text: input, sender: "user" }]);
-      if (input) {
-			const currentFileValues = localStorage.getItem(currentFile);
-         apiCall(currentFileValues + "\n" + input)
+      const currentFileValues = localStorage.getItem(currentFile);
+      if (input && currentFileValues) {
+         apiCall(currentFileValues, input)
             .then(aiOutput => {
                if (aiOutput !== null) {
                   setMessages(prevMessages => {
