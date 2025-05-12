@@ -16,17 +16,9 @@ func main() {
 
 	router.GET("/api/v1/airesponse", handlers.PromptHandler)
 	router.GET("/api/v1/files", handlers.GetFiles)
-
+	router.GET("/api/v1/fileContent")
 	router.POST("/api/v1/filecontent", handlers.CreateFiles)
-	// CORS config
-	// config := cors.Config{
-	// 	AllowOrigins:     []string{"*"},
-	// 	AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-	// 	AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
-	// 	ExposeHeaders:    []string{"Content-Length"},
-	// 	AllowCredentials: true,
-	// 	MaxAge:           12 * time.Hour,
-	// }
+
 	router.Run("localhost:8080")
 }
 
@@ -67,3 +59,13 @@ func corsMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+// CORS config
+// config := cors.Config{
+// 	AllowOrigins:     []string{"*"},
+// 	AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+// 	AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+// 	ExposeHeaders:    []string{"Content-Length"},
+// 	AllowCredentials: true,
+// 	MaxAge:           12 * time.Hour,
+// }
