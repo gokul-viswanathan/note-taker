@@ -5,6 +5,7 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -16,21 +17,19 @@ type GithubData struct {
 	path        string
 }
 
-func CreateFiles(data string) {
+func CreateFiles(owner string, repo string, token string, path string) string {
 
-	owner := "gokul-viswanathan"
-	repo := "notesTester"
-	filePath := "test2.json"
-	token := "xxx"
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
 
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, filePath)
+	data := b64.StdEncoding.EncodeToString([]byte("The content of the file is changed"))
 
-	data = b64.StdEncoding.EncodeToString([]byte("Hello from Go!"))
+	//sha is required for file update
 
 	payload := map[string]interface{}{
-		"message": "Create hello.txt in nested folder",
+		"message": "Create file3 in nested folder",
 		"content": data,
 		"branch":  "main",
+		"sha":     "",
 	}
 
 	jsonData, _ := json.Marshal(payload)
@@ -42,11 +41,12 @@ func CreateFiles(data string) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Request failed:", err)
-		return
+		log.Fatal("Request failed:", err)
 	}
 	defer resp.Body.Close()
 
 	fmt.Println("Status:", resp.Status)
+
+	return resp.Status
 
 }
