@@ -9,7 +9,11 @@ import (
 )
 
 func GetFiles(c *gin.Context) {
-	output, err := gh.FileNames()
+	user := c.Query("username")
+	repo := c.Query("repo")
+	token := c.GetHeader("token")
+
+	output, err := gh.FileNames(user, repo, token)
 
 	if err != nil {
 		log.Fatal("Error occured during get files", err)

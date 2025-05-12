@@ -30,10 +30,7 @@ type RepoItem struct {
 	Type string `json:"type"` // "file" or "dir" typically
 }
 
-func FileNames() ([]RepoItem, error) {
-	owner := "gokul-viswanathan"
-	repo := "notesTester"
-	token := "xxxx"
+func FileNames(owner string, repo string, token string) ([]RepoItem, error) {
 
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/", owner, repo)
 
@@ -78,8 +75,4 @@ func FileNames() ([]RepoItem, error) {
 	}
 
 	return items, nil
-}
-
-func FileContent() {
-
 }
