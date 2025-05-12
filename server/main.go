@@ -14,7 +14,10 @@ func main() {
 	router := gin.Default()
 	router.Use(corsMiddleware())
 
-	router.GET("/airesponse", handlers.PromptHandler)
+	router.GET("/api/v1/airesponse", handlers.PromptHandler)
+	router.GET("/api/v1/files", handlers.GetFiles)
+
+	router.POST("/api/v1/filecontent", handlers.CreateFiles)
 	// CORS config
 	// config := cors.Config{
 	// 	AllowOrigins:     []string{"*"},
