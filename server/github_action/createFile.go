@@ -9,14 +9,6 @@ import (
 	"net/http"
 )
 
-type GithubData struct {
-	fileName    string
-	fileContent string
-	user        string
-	repo        string
-	path        string
-}
-
 func CreateFiles(owner string, repo string, token string, path string) string {
 
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
