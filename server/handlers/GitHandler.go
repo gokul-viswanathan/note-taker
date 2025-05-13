@@ -22,11 +22,23 @@ func GetFiles(c *gin.Context) {
 }
 
 func CreateFiles(c *gin.Context) {
-	username := c.Query("username")
+	user := c.Query("username")
 	repo := c.Query("repo")
 	token := c.GetHeader("token")
 	path := c.Query("path")
 
-	resp := gh.CreateFiles(username, repo, token, path)
+	resp := gh.CreateFiles(user, repo, token, path)
 	c.IndentedJSON(http.StatusOK, resp)
+}
+
+func GetFileContent(c *gin.Context) {
+	user := c.Query("username")
+	repo := c.Query("repo")
+	token := c.GetHeader("token")
+	path := c.Query("path")
+
+	resp, _ := gh.FileContent(user, repo, token, path)
+
+	c.IndentedJSON(http.StatusOK, resp)
+
 }
