@@ -6,31 +6,11 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/gokul-viswanathan/note-taker/server/utils"
 )
 
-type GithubContent struct {
-	Name        string `json:"name"`
-	Path        string `json:"path"`
-	Sha         string `json:"sha"`
-	Size        int    `json:"size"`
-	URL         string `json:"url"`
-	HTMLURL     string `json:"html_url"`
-	GitURL      string `json:"git_url"`
-	DownloadURL string `json:"download_url"`
-	Type        string `json:"type"`
-	Links       struct {
-		Self string `json:"self"`
-		Git  string `json:"git"`
-		HTML string `json:"html"`
-	} `json:"_links"`
-}
-
-type RepoItem struct {
-	Name string `json:"name"`
-	Type string `json:"type"` // "file" or "dir" typically
-}
-
-func FileNames(owner string, repo string, token string) ([]RepoItem, error) {
+func FileNames(owner string, repo string, token string) ([]utils.RepoItem, error) {
 
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/", owner, repo)
 
@@ -53,7 +33,7 @@ func FileNames(owner string, repo string, token string) ([]RepoItem, error) {
 		log.Fatal("Error in getting response body ", err)
 	}
 
-	var contents []GithubContent
+	var contents []utils.GithubContent
 	err = json.Unmarshal(body, &contents)
 
 	if err != nil {
@@ -66,9 +46,9 @@ func FileNames(owner string, repo string, token string) ([]RepoItem, error) {
 		fmt.Println("API response for incorrect API structure:", errorResp)
 	}
 
-	items := make([]RepoItem, 0, len(contents))
+	items := make([]utils.RepoItem, 0, len(contents))
 	for _, item := range contents {
-		items = append(items, RepoItem{
+		items = append(items, utils.RepoItem{
 			Name: item.Name,
 			Type: item.Type,
 		})
