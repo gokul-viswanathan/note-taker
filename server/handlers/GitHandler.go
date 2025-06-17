@@ -27,7 +27,7 @@ func CreateFiles(c *gin.Context) {
 	// to create new file
 	user := c.Query("username")
 	repo := c.Query("repo")
-	token := c.GetHeader("token")
+	token := c.GetHeader("Bearer")
 	path := c.Query("path")
 
 	resp := gh.CreateFiles(user, repo, token, path)
@@ -38,10 +38,13 @@ func GetFileContent(c *gin.Context) {
 	// to get file content given the path - end with file ext
 	user := c.Query("username")
 	repo := c.Query("repo")
-	token := c.GetHeader("token")
-	path := c.Query("path")
+	token := c.GetHeader("Bearer")
+	path := c.Query("path") //path with the file name to get content
 
-	resp, _ := gh.FileContent(user, repo, token, path)
+	resp, err := gh.FileContent(c, user, repo, token, path)
+	if err != nil {
+		log.Fatal("Error occured during getting file content ", err)
+	}
 
 	c.IndentedJSON(http.StatusOK, resp)
 
