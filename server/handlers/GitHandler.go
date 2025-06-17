@@ -9,11 +9,13 @@ import (
 )
 
 func GetFiles(c *gin.Context) {
+	// to get file paths
 	user := c.Query("username")
 	repo := c.Query("repo")
-	token := c.GetHeader("token")
+	subPath := c.Query("subpath")
+	token := c.GetHeader("Bearer")
 
-	output, err := gh.FileNames(user, repo, token)
+	output, err := gh.FileNames(c, user, repo, token, subPath)
 
 	if err != nil {
 		log.Fatal("Error occured during get files", err)
@@ -22,6 +24,7 @@ func GetFiles(c *gin.Context) {
 }
 
 func CreateFiles(c *gin.Context) {
+	// to create new file
 	user := c.Query("username")
 	repo := c.Query("repo")
 	token := c.GetHeader("token")
@@ -32,6 +35,7 @@ func CreateFiles(c *gin.Context) {
 }
 
 func GetFileContent(c *gin.Context) {
+	// to get file content given the path - end with file ext
 	user := c.Query("username")
 	repo := c.Query("repo")
 	token := c.GetHeader("token")

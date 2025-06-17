@@ -16,7 +16,7 @@ func main() {
 
 	router.GET("/api/v1/airesponse", handlers.PromptHandler)
 	router.GET("/api/v1/files", handlers.GetFiles)
-	router.GET("/api/v1/fileContent", handlers.GetFileContent)
+	router.GET("/api/v1/filecontent", handlers.GetFileContent)
 	router.POST("/api/v1/filecontent", handlers.CreateFiles)
 
 	router.Run("localhost:8080")
