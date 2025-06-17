@@ -1,48 +1,107 @@
 package github_action
 
 import (
-	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gokul-viswanathan/note-taker/server/utils"
 )
 
-func FileContent(owner string, repo string, token string, path string) (string, error) {
+func FileContent(ctx context.Context, owner string, repo string, token string, path string) (string, error) {
 
+	if owner == "" || repo == "" || token == "" || path == "" {
+		return "", fmt.Errorf("owner, repo, token, and path are required")
+	}
+	path = strings.Trim(path, "/")
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
-
-	fmt.Println("the url is", url)
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("Authorization", "token "+token)
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-
+	fmt.Print("the URL is ", url)
+	// Create request with context
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
-		log.Fatal("Error in get file contents ", err)
+		return "", fmt.Errorf("failed to create request: %w", err)
 	}
 
-	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
+	req.Header.Set("User-Agent", "YourApp/1.0")
 
-	//content - get this
-	var contents utils.GithubFileContent
-	json.Unmarshal(body, &contents)
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
 
-	// decode to original string
-	cleanContent := []byte(contents.Content)
-	cleanContent = bytes.ReplaceAll(cleanContent, []byte("\n"), []byte(""))
-
-	decoded, err := base64.StdEncoding.DecodeString(string(cleanContent))
+	// Make request
+	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		return "", fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	// Read response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	// fmt.Print("the body of the request is ", body)
+
+	// Handle different HTTP status codes
+	switch resp.StatusCode {
+	case http.StatusOK:
+		// Success - continue processing
+	case http.StatusNotFound:
+		return "", fmt.Errorf("file not found: %s in %s/%s", path, owner, repo)
+	case http.StatusUnauthorized:
+		return "", fmt.Errorf("authentication failed - check your token")
+	case http.StatusForbidden:
+		return "", fmt.Errorf("access forbidden - insufficient permissions")
+	default:
+		// Try to parse error response
+		var errorResp struct {
+			Message string `json:"message"`
+		}
+		if json.Unmarshal(body, &errorResp) == nil && errorResp.Message != "" {
+			return "", fmt.Errorf("GitHub API error (%d): %s", resp.StatusCode, errorResp.Message)
+		}
+		return "", fmt.Errorf("API request failed with status %d", resp.StatusCode)
+	}
+
+	// Parse JSON response
+	var fileContent utils.GithubFileContent
+	if err := json.Unmarshal(body, &fileContent); err != nil {
+		return "", fmt.Errorf("failed to parse response JSON: %w", err)
+	}
+
+	// Check if it's actually a file (not a directory)
+	if fileContent.Type != "file" {
+		return "", fmt.Errorf("path %s is not a file (type: %s)", path, fileContent.Type)
+	}
+
+	// Decode base64 content
+	decodedContent, err := decodeBase64Content(fileContent.Content)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode file content: %w", err)
+	}
+
+	return decodedContent, nil
+}
+
+// decodeBase64Content handles the base64 decoding with proper cleanup
+func decodeBase64Content(encodedContent string) (string, error) {
+	// Remove newlines and whitespace from base64 content
+	cleanContent := strings.ReplaceAll(encodedContent, "\n", "")
+	cleanContent = strings.ReplaceAll(cleanContent, "\r", "")
+	cleanContent = strings.TrimSpace(cleanContent)
+
+	// Decode base64
+	decoded, err := base64.StdEncoding.DecodeString(cleanContent)
+	if err != nil {
+		return "", fmt.Errorf("base64 decode error: %w", err)
 	}
 
 	return string(decoded), nil
