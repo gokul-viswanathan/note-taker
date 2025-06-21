@@ -13,10 +13,18 @@ import (
 	"github.com/gokul-viswanathan/note-taker/server/utils"
 )
 
-func FileContent(ctx context.Context, owner string, repo string, token string, path string) (string, error) {
+type FileContentStruct struct {
+	Name    string `json:"name"`
+	Path    string `json:"path"`
+	Sha     string `json:"sha"`
+	URL     string `json:"url"`
+	Content string `json:"content"`
+}
+
+func FileContent(ctx context.Context, owner string, repo string, token string, path string) (FileContentStruct, error) {
 
 	if owner == "" || repo == "" || token == "" || path == "" {
-		return "", fmt.Errorf("owner, repo, token, and path are required")
+		return FileContentStruct{}, fmt.Errorf("owner, repo, token, and path are required")
 	}
 	path = strings.Trim(path, "/")
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
@@ -24,7 +32,7 @@ func FileContent(ctx context.Context, owner string, repo string, token string, p
 	// Create request with context
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to create request: %w", err)
+		return FileContentStruct{}, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	req.Header.Set("Authorization", "Bearer "+token)
@@ -38,14 +46,14 @@ func FileContent(ctx context.Context, owner string, repo string, token string, p
 	// Make request
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("request failed: %w", err)
+		return FileContentStruct{}, fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	// Read response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("failed to read response body: %w", err)
+		return FileContentStruct{}, fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	// fmt.Print("the body of the request is ", body)
@@ -55,40 +63,48 @@ func FileContent(ctx context.Context, owner string, repo string, token string, p
 	case http.StatusOK:
 		// Success - continue processing
 	case http.StatusNotFound:
-		return "", fmt.Errorf("file not found: %s in %s/%s", path, owner, repo)
+		return FileContentStruct{}, fmt.Errorf("file not found: %s in %s/%s", path, owner, repo)
 	case http.StatusUnauthorized:
-		return "", fmt.Errorf("authentication failed - check your token")
+		return FileContentStruct{}, fmt.Errorf("authentication failed - check your token")
 	case http.StatusForbidden:
-		return "", fmt.Errorf("access forbidden - insufficient permissions")
+		return FileContentStruct{}, fmt.Errorf("access forbidden - insufficient permissions")
 	default:
 		// Try to parse error response
 		var errorResp struct {
 			Message string `json:"message"`
 		}
 		if json.Unmarshal(body, &errorResp) == nil && errorResp.Message != "" {
-			return "", fmt.Errorf("GitHub API error (%d): %s", resp.StatusCode, errorResp.Message)
+			return FileContentStruct{}, fmt.Errorf("GitHub API error (%d): %s", resp.StatusCode, errorResp.Message)
 		}
-		return "", fmt.Errorf("API request failed with status %d", resp.StatusCode)
+		return FileContentStruct{}, fmt.Errorf("API request failed with status %d", resp.StatusCode)
 	}
 
 	// Parse JSON response
 	var fileContent utils.GithubFileContent
 	if err := json.Unmarshal(body, &fileContent); err != nil {
-		return "", fmt.Errorf("failed to parse response JSON: %w", err)
+		return FileContentStruct{}, fmt.Errorf("failed to parse response JSON: %w", err)
 	}
 
 	// Check if it's actually a file (not a directory)
 	if fileContent.Type != "file" {
-		return "", fmt.Errorf("path %s is not a file (type: %s)", path, fileContent.Type)
+		return FileContentStruct{}, fmt.Errorf("path %s is not a file (type: %s)", path, fileContent.Type)
 	}
 
-	// Decode base64 content
+	// Decode base64 content nd return SHA maybe
 	decodedContent, err := decodeBase64Content(fileContent.Content)
 	if err != nil {
-		return "", fmt.Errorf("failed to decode file content: %w", err)
+		return FileContentStruct{}, fmt.Errorf("failed to decode file content: %w", err)
 	}
 
-	return decodedContent, nil
+	contentOutput := FileContentStruct{
+		Name:    fileContent.Name,
+		Path:    fileContent.Path,
+		Sha:     fileContent.Sha,
+		URL:     fileContent.URL,
+		Content: decodedContent,
+	}
+
+	return contentOutput, nil
 }
 
 // decodeBase64Content handles the base64 decoding with proper cleanup
