@@ -20,6 +20,9 @@ type GithubContent struct {
 type RepoItem struct {
 	Name string `json:"name"`
 	Type string `json:"type"` // "file" or "dir" typically
+	Path string `json:"path"`
+	Sha  string `json:"sha"`
+	URL  string `json:"url"`
 }
 
 type GithubFileContent struct {
