@@ -88,6 +88,8 @@ func FileNames(ctx context.Context, owner, repo, token, path string) ([]utils.Re
 			Name: item.Name,
 			Type: item.Type,
 			Path: item.Path, // Include full path if available in GithubContent
+			Sha:  item.Sha,
+			URL:  item.URL,
 		})
 	}
 
