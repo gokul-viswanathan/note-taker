@@ -1,0 +1,82 @@
+import { FolderIcon, ChevronIcon, FileIcon } from "@/components/sidebar/Icons"
+
+interface FileItem {
+    name: string;
+    type: "file" | "dir";
+    path: string; // Full path to the item
+    children?: FileItem[]; // For directories, contains subdirectories and files
+}
+
+interface FolderTreeProps {
+    items: FileItem[];
+    currentFile: string;
+    expandedFolders: Set<string>;
+    onFileSelect: (fileName: string, fullPath: string) => void;
+    onToggleFolder: (folderName: string, folderPath: string) => void;
+    onContextMenu: (e: React.MouseEvent, item: FileItem) => void;
+    depth?: number; // Track nesting depth for styling
+}
+
+const FolderTree: React.FC<FolderTreeProps> = ({
+    items,
+    currentFile,
+    expandedFolders,
+    onFileSelect,
+    onToggleFolder,
+    onContextMenu,
+    depth = 0
+}) => {
+    const indentClass = `ml-${depth * 6}`; // Adjust indentation based on depth
+
+    return (
+        <div className={depth > 0 ? indentClass : ""}>
+            {items.map((item, index) => (
+                <div key={`${item.path}-${index}`}>
+                    {item.type === "dir" ? (
+                        <>
+                            {/* Folder Header */}
+                            <div
+                                className="flex items-center p-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer"
+                                onClick={() => onToggleFolder(item.name, item.path)}
+                                onContextMenu={(e) => onContextMenu(e, item)}
+                            >
+                                <ChevronIcon isOpen={expandedFolders.has(item.path)} />
+                                <FolderIcon isOpen={expandedFolders.has(item.path)} />
+                                <span className="font-medium">{item.name}</span>
+                            </div>
+
+                            {/* Recursive Folder Contents */}
+                            {expandedFolders.has(item.path) && item.children && (
+                                <FolderTree
+                                    items={item.children}
+                                    currentFile={currentFile}
+                                    expandedFolders={expandedFolders}
+                                    onFileSelect={onFileSelect}
+                                    onToggleFolder={onToggleFolder}
+                                    onContextMenu={onContextMenu}
+                                    depth={depth + 1}
+                                />
+                            )}
+                        </>
+                    ) : (
+                        /* File Item */
+                        <div
+                            className={`flex items-center p-2 text-sm rounded-md cursor-pointer group
+                ${item.path === currentFile
+                                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
+                                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                }`}
+                            onClick={() => onFileSelect(item.name, item.path)}
+                            onContextMenu={(e) => onContextMenu(e, item)}
+                        >
+                            <FileIcon fileName={item.name} />
+                            <span className="flex-1 truncate">{item.name}</span>
+                        </div>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default FolderTree;
