@@ -3,10 +3,10 @@ package main
 import (
 	// "fmt"
 	// "net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gokul-viswanathan/note-taker/server/handlers"
+	"slices"
 )
 
 // complete the cors setup
@@ -18,6 +18,7 @@ func main() {
 	router.GET("/api/v1/files", handlers.GetFiles)
 	router.GET("/api/v1/filecontent", handlers.GetFileContent)
 	router.POST("/api/v1/filecontent", handlers.CreateFiles)
+	router.POST("/api/v1/oauth/callback", handlers.OAuthCallback)
 	router.DELETE("/api/v1/delete", handlers.DeleteFile)
 
 	router.Run("localhost:8080")
@@ -25,30 +26,22 @@ func main() {
 
 // CORS middleware function definition
 func corsMiddleware() gin.HandlerFunc {
+
 	return func(c *gin.Context) {
-		originsString := "https://example.com,https://test.com,http://192.168.1.44:3000,http://localhost:3000"
-		allowedOrigins := strings.Split(originsString, ",")
-
-		for i, origin := range allowedOrigins {
-			allowedOrigins[i] = strings.TrimSpace(origin)
+		allowedOrigins := []string{
+			"https://example.com",
+			"https://test.com",
+			"http://192.168.1.44:3000",
+			"http://localhost:3000",
 		}
 
-		isOriginAllowed := func(origin string, allowedOrigins []string) bool {
-			for _, allowedOrigin := range allowedOrigins {
-				if origin == allowedOrigin {
-					return true
-				}
-			}
-			return false
-		}
-
-		origin := c.Request.Header.Get("Origin")
+		origin := c.GetHeader("Origin")
 		c.Writer.Header().Set("Vary", "Origin")
 
-		if isOriginAllowed(origin, allowedOrigins) {
+		if slices.Contains(allowedOrigins, origin) {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 			c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-			c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+			c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-CSRF-Token, Cache-Control, X-Requested-With")
 			c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
 		}
 

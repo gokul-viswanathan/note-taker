@@ -1,6 +1,5 @@
 // import Image from "next/image";
 'use client'
-import QuillEditor from "../components/quill/QuillEditor"
 import React, { useState, useEffect } from 'react';
 
 import QuillEditor from "@/components/QuillEditor"
@@ -31,19 +30,26 @@ const MainComponent = () => {
     //     loadFiles(); // Call the async function inside useEffect
     // }, [username, repo, subpath, token]);
     //
+
     function setChoosenFile(content: string) {
         setCurrentFile(content)
     }
-    setFiles(loadedFiles);
-  }, [])
 
-  const [currentFile, setCurrentFile] = useState(theGuide);
-  function setChoosenFile(content: string) {
-    setCurrentFile(content)
-  }
+    return (
+        <div className="h-screen bg-stone-950">
 
-  return (
-    <div className="h-screen bg-stone-950">
+            <div className="flex items-center justify-between px-4 py-2 bg-zinc-900 text-white">
+                <button onClick={() => setShowFileSideBar(prev => !prev)}>
+                    {showFileSideBar ? 'Hide' : 'Show'} Notes
+                </button>
+                <h1 className="text-lg font-bold">Though Ink</h1>
+                <button onClick={() => githubAuth()}>
+                    Github Auth
+                </button>
+                <button onClick={() => setShowAiSideBar(prev => !prev)}>
+                    {showAiSideBar ? 'Hide' : 'Show'} AI
+                </button>
+            </div>
 
             <div className="flex">
                 {/* Left sidebar */}
@@ -55,19 +61,21 @@ const MainComponent = () => {
                 </ResizableSidebar>)}
 
 
-        {/* Editor */}
-        <div className="flex-1 overflow-hidden">
-          <QuillEditor currentFile={currentFile} />
+                {/* Editor */}
+                <div className="flex-1 overflow-hidden">
+                    <QuillEditor currentFile={currentFile} />
+                </div>
+
+                {/* Right AI sidebar */}
+                {/*
+                {showAiSideBar && (<ResizableSidebar side="right">
+                    <AiSideBar currentFile={currentFile} />
+                </ResizableSidebar>)}
+                */}
+            </div>
+
         </div>
-
-        {/* Right AI sidebar */}
-        {showAiSideBar && (<ResizableSidebar side="right">
-          <AiSideBar currentFile={currentFile} />
-        </ResizableSidebar>)}
-      </div>
-
-    </div>
-  );
+    );
 };
 
 export default MainComponent; 
