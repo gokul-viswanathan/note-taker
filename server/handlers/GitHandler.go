@@ -20,7 +20,8 @@ func GetFiles(c *gin.Context) {
 	output, err := gh.FileNames(c, user, repo, token, subPath)
 
 	if err != nil {
-		log.Fatal("Error occured during get files", err)
+		c.IndentedJSON(http.StatusBadGateway, "error happended")
+		fmt.Println("Error occured during get files ", err)
 	}
 	c.IndentedJSON(http.StatusOK, output)
 }
@@ -34,7 +35,7 @@ func GetFileContent(c *gin.Context) {
 
 	resp, err := gh.FileContent(c, user, repo, token, path)
 	if err != nil {
-		log.Fatal("Error occured during getting file content ", err)
+		fmt.Println("Error occured during getting file content ", err)
 	}
 
 	c.IndentedJSON(http.StatusOK, resp)
@@ -70,14 +71,14 @@ func CreateFiles(c *gin.Context) {
 
 	contentBytes, err := json.Marshal(content)
 	if err != nil {
-		log.Fatal("failed to marshal content:", err)
+		fmt.Println("failed to marshal content:", err)
 	}
 
 	currentUserObject := gh.NewGitHubClient(user, repo, token)
 	resp, err := currentUserObject.CreateOrUpdateFile(path, contentBytes, sha, commitMessage)
 
 	if err != nil {
-		log.Fatal("the creation or updation process was not completed Successfully :", err)
+		fmt.Println("the creation or updation process was not completed Successfully :", err)
 	}
 
 	c.IndentedJSON(http.StatusOK, resp)
@@ -92,7 +93,7 @@ func DeleteFile(c *gin.Context) {
 
 	resp, err := gh.DeleteFile(user, repo, token, sha, path)
 	if err != nil {
-		log.Fatal("Error occured during file deletion ", err)
+		fmt.Println("Error occured during file deletion ", err)
 	}
 	c.IndentedJSON(http.StatusOK, resp)
 }
