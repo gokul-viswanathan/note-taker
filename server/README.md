@@ -1,9 +1,9 @@
 # TODO:
 
-- [x] create files api
-- [x] update files api (work for multiple)
-- [x] Delete files api
-- [ ] Github authentication understanding
-    -[ ] API creation
-    -[ ] UI for github logic
+- [x] use the callback for authorization
+- [ ] alter the code before sending to frontend
+- [ ] try and make api calls. 
+
+# IMPORATANT:
+- secure chatgpt key, client key, client secure key
 
