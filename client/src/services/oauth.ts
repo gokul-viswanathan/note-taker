@@ -1,8 +1,4 @@
-
-
-// const CLIENT_ID = "Ov23liqa1cXmK19LF4gk"; (oauth client id)
-
-const CLIENT_ID = "Iv23liOSDKA05BdSC59m"; // githuapp client id - need to secure
+const CLIENT_ID = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID // githuapp client id - need to secure
 const REDIRECT_URI = "http://localhost:3000/callback"
 const APP_SLUG = "Thought Ink";
 
