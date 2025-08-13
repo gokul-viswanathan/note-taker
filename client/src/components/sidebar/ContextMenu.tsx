@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useStore } from '@/stores/states';
 
 type Props = {
     position: { x: number; y: number };
@@ -35,7 +36,8 @@ export function CustomContextMenu({ position, item, onClose }: Props) {
     // Menu action handlers
     const createFolder = () => {
         console.log('Create Folder', item);
-
+        // set folder creation state as true.
+        useStore.getState().setIsCreateFolderOpen?.(true);
     };
 
     const createFile = () => {

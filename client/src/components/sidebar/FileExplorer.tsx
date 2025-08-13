@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
-import { GitFileItem } from "@/types/git-interface";
+import { FileItem } from "@/types/git-interface";
 import CustomContextMenu from "@/components/sidebar/ContextMenu";
 import fetchFiles from "@/services/getFiles";
 import FolderTree from "@/components/sidebar/FolderTree"
-
+import { useStore } from "@/stores/states";
 
 type FileExplorerProps = {
     onFileSelect: (fileName: string) => void;
 }
 
 // this is what node contains. but gitfileitem is type of the input message
-interface FileItem extends GitFileItem {
-    children?: FileItem[]; // For directories, contains subdirectories and files
-}
+// interface FileItem extends GitFileItem {
+//     children?: FileItem[]; // For directories, contains subdirectories and files
+// }
 
 function updateFileItemChildren(
     tree: FileItem[],
@@ -56,6 +56,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
         e.preventDefault();
         setMenuPos({ x: e.clientX, y: e.clientY });
         setContextItem(item);
+        useStore.getState().setContextMenuItem?.(item);
     };
 
     // Function to dynamically load folder contents

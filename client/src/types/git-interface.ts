@@ -5,3 +5,8 @@ export interface GitFileItem {
     type: "file" | "dir"; // "dir" if folders are also possible
     url?: string;
 }
+
+export interface FileItem extends GitFileItem {
+    children?: FileItem[]; // For directories, contains subdirectories and files
+}
+

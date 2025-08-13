@@ -79,6 +79,27 @@ type Delta struct {
 	Attributes map[string]any `json:"attributes,omitempty"`
 }
 
+func CreateFolder(c *gin.Context) {
+	// to create new file
+	user := c.Query("username")
+	repo := c.Query("repo")
+	path := c.Query("path")
+	authHeader := c.GetHeader("Authorization")
+	token := ""
+	if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
+		token = strings.TrimPrefix(authHeader, "Bearer ")
+	}
+
+	sha := ""
+	currentUserObject := gh.NewGitHubClient(user, repo, token)
+	resp, err := currentUserObject.CreateOrUpdateFolder(path, sha)
+
+	if err != nil {
+		fmt.Println("the creation or updation process was not completed Successfully :", err)
+	}
+
+	c.IndentedJSON(http.StatusOK, resp)
+}
 func CreateFiles(c *gin.Context) {
 	// to create new file
 	user := c.Query("username")

@@ -1,4 +1,7 @@
-import { FolderIcon, ChevronIcon, FileIcon } from "@/components/sidebar/Icons"
+import { FolderIcon, ChevronIcon, FileIcon, RightIcon, CancelIcon } from "@/components/sidebar/Icons"
+import { useStore } from "@/stores/states";
+import { useState } from "react";
+import { createNewFolder } from "@/services/createNewFile";
 
 interface FileItem {
     name: string;
@@ -27,6 +30,27 @@ const FolderTree: React.FC<FolderTreeProps> = ({
     depth = 0
 }) => {
     const indentClass = `ml-${depth * 6}`; // Adjust indentation based on depth
+    const isCreateFolderOpen = useStore((state) => state.isCreateFolderOpen);
+    const setIsCreateFolderOpen = useStore((state) => state.setIsCreateFolderOpen);
+    const [newName, setNewName] = useState("");
+
+    const handleCreateFolder = () => {
+        console.log("Creating new folder:", newName);
+        // call api to create folder or file
+        // After creation, update state variable and reset state.
+        // need path to update exact path.
+        const pathToCreateNewFolder = useStore.getState().contextMenuItem?.path || "";
+        const pathOfNewFolder = pathToCreateNewFolder + "/" + newName + "/"; // Assuming new files are markdown files
+        createNewFolder(pathOfNewFolder);
+        setNewName("");
+        setIsCreateFolderOpen?.(false);
+        //setcurrent file to new file
+    };
+
+    const handleCancel = () => {
+        setNewName("");
+        setIsCreateFolderOpen?.(false);
+    };
 
     return (
         <div className={depth > 0 ? indentClass : ""}>
@@ -44,6 +68,22 @@ const FolderTree: React.FC<FolderTreeProps> = ({
                                 <FolderIcon isOpen={expandedFolders.has(item.path)} />
                                 <span className="font-medium">{item.name}</span>
                             </div>
+
+                            {isCreateFolderOpen && (
+                                <div className="flex items-center p-2 pl-8">
+                                    <input
+                                        className="flex-1 rounded border px-1 text-sm"
+                                        value={newName}
+                                        onChange={(e) => setNewName(e.target.value)}
+                                        autoFocus
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") handleCreateFolder();
+                                            if (e.key === "Escape") handleCancel();
+                                        }}
+                                        placeholder="New folder name"
+                                    />
+                                </div>
+                            )}
 
                             {/* Recursive Folder Contents */}
                             {expandedFolders.has(item.path) && item.children && (
