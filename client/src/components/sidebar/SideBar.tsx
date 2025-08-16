@@ -1,10 +1,6 @@
 import FolderSection from "@/components/sidebar/FileExplorer"
-type SidebarProps = {
-    currentFile: string;
-    onFileSelect: (file: string) => void;
-};
 
-const Sidebar: React.FC<SidebarProps> = ({ onFileSelect }) => {
+const Sidebar: React.FC = () => {
     return (
         <>
             <div
@@ -17,7 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onFileSelect }) => {
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Thought Ink</h1>
                     </div>
 
-                    <FolderSection onFileSelect={onFileSelect} />
+                    <FolderSection />
 
                 </div>
             </div>

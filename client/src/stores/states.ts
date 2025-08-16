@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { FileItem } from "@/types/git-interface";
 
 interface BearState {
+    currentFile?: FileItem | string;
+    setCurrentFile?: (file: FileItem) => void;
     isCreateFolderOpen?: boolean;
     setIsCreateFolderOpen?: (isOpen: boolean) => void;
     isContextMenuOpen?: boolean;
@@ -11,6 +13,10 @@ interface BearState {
 }
 
 export const useStore = create<BearState>((set) => ({
+    //curent file state
+    currentFile: "",
+    setCurrentFile: (file: FileItem) => set({ currentFile: file }),
+
     //create folder modal state
     isCreateFolderOpen: false,
     setIsCreateFolderOpen: (isOpen: boolean) => set({ isCreateFolderOpen: isOpen }),
