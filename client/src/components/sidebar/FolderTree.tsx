@@ -32,11 +32,11 @@ const FolderTree: React.FC<FolderTreeProps> = ({
     const indentClass = `ml-${depth * 6}`; // Adjust indentation based on depth
     const isCreateFolderOpen = useStore((state) => state.isCreateFolderOpen);
     const setIsCreateFolderOpen = useStore((state) => state.setIsCreateFolderOpen);
+    const currentCreateFodlerPath = useStore((state) => state.contextMenuItem?.path);
     const [newName, setNewName] = useState("");
 
     const handleCreateFolder = () => {
         console.log("Creating new folder:", newName);
-        // call api to create folder or file
         // After creation, update state variable and reset state.
         // need path to update exact path.
         const pathToCreateNewFolder = useStore.getState().contextMenuItem?.path || "";
@@ -44,7 +44,6 @@ const FolderTree: React.FC<FolderTreeProps> = ({
         createNewFolder(pathOfNewFolder);
         setNewName("");
         setIsCreateFolderOpen?.(false);
-        //setcurrent file to new file
     };
 
     const handleCancel = () => {
@@ -69,7 +68,7 @@ const FolderTree: React.FC<FolderTreeProps> = ({
                                 <span className="font-medium">{item.name}</span>
                             </div>
 
-                            {isCreateFolderOpen && (
+                            {isCreateFolderOpen && item.path === currentCreateFodlerPath && (
                                 <div className="flex items-center p-2 pl-8">
                                     <input
                                         className="flex-1 rounded border px-1 text-sm"

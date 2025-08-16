@@ -9,9 +9,10 @@ export const createNewFolder = async (path: string) => {
     const subpath = path.split("/").map(encodeURIComponent).join("/");
 
     const url = `${baseURL}/v1/folder?username=${username}&repo=${repo}&path=${subpath}`;
+    console.log("Creating folder at URL:", url);
     try {
         const response = await fetch(url, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",

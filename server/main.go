@@ -18,7 +18,7 @@ func main() {
 	router.GET("/api/v1/files", handlers.GetFiles)
 	router.GET("/api/v1/filecontent", handlers.GetFileContent)
 	router.POST("/api/v1/filecontent", handlers.CreateFiles)
-	router.POST("/api/v1/folder", handlers.CreateFolder)
+	router.PUT("/api/v1/folder", handlers.CreateFolder)
 	router.POST("/api/v1/oauth/callback", handlers.OAuthCallback)
 	router.DELETE("/api/v1/delete", handlers.DeleteFile)
 
