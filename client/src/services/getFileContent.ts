@@ -9,6 +9,7 @@ const fetchFileContent = async (path: string) => {
 
     const subpath = path.split("/").map(encodeURIComponent).join("/");
     const url = `${baseURL}/v1/filecontent?username=${username}&repo=${repo}&subpath=${subpath}`;
+    console.log("Fetching file content from URL:", url);
 
     try {
         const response = await fetch(url, {
