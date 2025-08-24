@@ -1,10 +1,19 @@
 'use client'
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 
-import QuillEditor from "@/components/QuillEditor"
-import SideBar from "@/components/sidebar/SideBar"
+const QuillEditor = dynamic(
+    () => import('@/components/NewQuillEditor'),
+    {
+        ssr: false,
+        loading: () => <div>Loading editor...</div>
+    }
+);
+// import QuillEditor from "@/components/QuillEditor"
+// import QuillEditor from "@/components/NewQuillEditor";
+// import SideBar from "@/components/sidebar/SideBar"
 // import AiSideBar from "@/components/aiSideBar";
-import ResizableSidebar from '@/components/ResizableSidebar';
+// import ResizableSidebar from '@/components/ResizableSidebar';
 import githubAuth from "@/services/oauth";
 import { useStore } from '@/stores/states';
 import { FileItem } from '@/types/git-interface';
@@ -54,15 +63,17 @@ const MainComponent = () => {
                 </button>
             </div>
 
+            {/* TODO: reduce the height of the editor to fit the header*/}
+
             <div className="flex">
-                {/* Left sidebar */}
+                {/* Left sidebar 
                 {showFileSideBar && (<ResizableSidebar side="left">
                     <SideBar />
                 </ResizableSidebar>)}
-
+                */}
 
                 {/* Editor */}
-                <div className="flex-1 overflow-hidden">
+                <div className="Editor dark flex-1 overflow-hidden">
                     <QuillEditor />
                 </div>
 

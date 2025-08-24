@@ -2,6 +2,8 @@ import { FolderIcon, ChevronIcon, FileIcon, RightIcon, CancelIcon } from "@/comp
 import { useStore } from "@/stores/states";
 import { useState } from "react";
 import { createNewFolder } from "@/services/createNewFile";
+import { GitFileItem } from "@/types/git-interface";
+import { Input } from "@/components/ui/input"
 
 interface FileItem {
     name: string;
@@ -12,33 +14,31 @@ interface FileItem {
 
 interface FolderTreeProps {
     items: FileItem[];
-    currentFile: string;
     expandedFolders: Set<string>;
-    onFileSelect: (fileName: string, fullPath: string) => void;
     onToggleFolder: (folderName: string, folderPath: string) => void;
-    onContextMenu: (e: React.MouseEvent, item: FileItem) => void;
+    handleContextMenu?: (item: FileItem) => void;
     depth?: number; // Track nesting depth for styling
 }
 
 const FolderTree: React.FC<FolderTreeProps> = ({
     items,
-    currentFile,
     expandedFolders,
-    onFileSelect,
     onToggleFolder,
-    onContextMenu,
+    handleContextMenu,
     depth = 0
 }) => {
-    const indentClass = `ml-${depth * 6}`; // Adjust indentation based on depth
     const isCreateFolderOpen = useStore((state) => state.isCreateFolderOpen);
     const setIsCreateFolderOpen = useStore((state) => state.setIsCreateFolderOpen);
     const currentCreateFodlerPath = useStore((state) => state.contextMenuItem?.path);
     const [newName, setNewName] = useState("");
+    const currentFile = useStore((state) => state.currentFile);
+
+    const handleFileSelect = (selectedFile: GitFileItem) => {
+        console.log("Selected file:", selectedFile);
+        useStore.getState().setCurrentFile?.(selectedFile);
+    }
 
     const handleCreateFolder = () => {
-        console.log("Creating new folder:", newName);
-        // After creation, update state variable and reset state.
-        // need path to update exact path.
         const pathToCreateNewFolder = useStore.getState().contextMenuItem?.path || "";
         const pathOfNewFolder = pathToCreateNewFolder + "/" + newName + "/"; // Assuming new files are markdown files
         createNewFolder(pathOfNewFolder);
@@ -52,7 +52,7 @@ const FolderTree: React.FC<FolderTreeProps> = ({
     };
 
     return (
-        <div className={depth > 0 ? indentClass : ""}>
+        <div style={{ marginLeft: depth > 0 ? `${depth * 1.5}rem` : '0' }}>
             {items.map((item, index) => (
                 <div key={`${item.path}-${index}`}>
                     {item.type === "dir" ? (
@@ -61,7 +61,9 @@ const FolderTree: React.FC<FolderTreeProps> = ({
                             <div
                                 className="flex items-center p-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer"
                                 onClick={() => onToggleFolder(item.name, item.path)}
-                                onContextMenu={(e) => onContextMenu(e, item)}
+                                onContextMenu={() => {
+                                    handleContextMenu?.(item);
+                                }}
                             >
                                 <ChevronIcon isOpen={expandedFolders.has(item.path)} />
                                 <FolderIcon isOpen={expandedFolders.has(item.path)} />
@@ -70,14 +72,14 @@ const FolderTree: React.FC<FolderTreeProps> = ({
 
                             {isCreateFolderOpen && item.path === currentCreateFodlerPath && (
                                 <div className="flex items-center p-2 pl-8">
-                                    <input
-                                        className="flex-1 rounded border px-1 text-sm"
+                                    <Input
+                                        className="flex-1 text-sm"
                                         value={newName}
                                         onChange={(e) => setNewName(e.target.value)}
                                         autoFocus
                                         onKeyDown={(e) => {
-                                            if (e.key === "Enter") handleCreateFolder();
-                                            if (e.key === "Escape") handleCancel();
+                                            if (e.key === "Enter") handleCreateFolder()
+                                            if (e.key === "Escape") handleCancel()
                                         }}
                                         placeholder="New folder name"
                                     />
@@ -88,11 +90,9 @@ const FolderTree: React.FC<FolderTreeProps> = ({
                             {expandedFolders.has(item.path) && item.children && (
                                 <FolderTree
                                     items={item.children}
-                                    currentFile={currentFile}
                                     expandedFolders={expandedFolders}
-                                    onFileSelect={onFileSelect}
                                     onToggleFolder={onToggleFolder}
-                                    onContextMenu={onContextMenu}
+                                    handleContextMenu={handleContextMenu}
                                     depth={depth + 1}
                                 />
                             )}
@@ -105,8 +105,10 @@ const FolderTree: React.FC<FolderTreeProps> = ({
                                     ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
                                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                                 }`}
-                            onClick={() => onFileSelect(item.name, item.path)}
-                            onContextMenu={(e) => onContextMenu(e, item)}
+                            onClick={() => handleFileSelect(item)}
+                            onContextMenu={() => {
+                                handleContextMenu?.(item);
+                            }}
                         >
                             <FileIcon fileName={item.name} />
                             <span className="flex-1 truncate">{item.name}</span>
