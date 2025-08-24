@@ -23,6 +23,8 @@ type FileContentStruct struct {
 
 func FileContent(ctx context.Context, owner string, repo string, token string, path string) (FileContentStruct, error) {
 
+	fmt.Print("the variables are ", owner, repo, token, path)
+	// Validate inputs
 	if owner == "" || repo == "" || token == "" || path == "" {
 		return FileContentStruct{}, fmt.Errorf("owner, repo, token, and path are required")
 	}

@@ -11,9 +11,9 @@ const QuillEditor = dynamic(
 );
 // import QuillEditor from "@/components/QuillEditor"
 // import QuillEditor from "@/components/NewQuillEditor";
-// import SideBar from "@/components/sidebar/SideBar"
+import SideBar from "@/components/sidebar/SideBar"
 // import AiSideBar from "@/components/aiSideBar";
-// import ResizableSidebar from '@/components/ResizableSidebar';
+import ResizableSidebar from '@/components/ResizableSidebar';
 import githubAuth from "@/services/oauth";
 import { useStore } from '@/stores/states';
 import { FileItem } from '@/types/git-interface';
@@ -66,11 +66,11 @@ const MainComponent = () => {
             {/* TODO: reduce the height of the editor to fit the header*/}
 
             <div className="flex">
-                {/* Left sidebar 
+                {/* Left sidebar */}
                 {showFileSideBar && (<ResizableSidebar side="left">
                     <SideBar />
                 </ResizableSidebar>)}
-                */}
+
 
                 {/* Editor */}
                 <div className="Editor dark flex-1 overflow-hidden">
