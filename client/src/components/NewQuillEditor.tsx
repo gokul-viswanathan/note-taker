@@ -24,7 +24,6 @@ const Editor = forwardRef((props, forwardedRef): React.JSX.Element => {
     const currentFile = useStore((state) => state.currentFile);
 
     useEffect(() => {
-        console.log("Current file with quill editor changed:", currentFile);
         const loadFileContent = async () => {
             if (currentFile && typeof currentFile !== 'string' && 'path' in currentFile) {
                 const data = await fetchFileContent(currentFile.path);
@@ -47,21 +46,28 @@ const Editor = forwardRef((props, forwardedRef): React.JSX.Element => {
     useEffect(() => {
         if (quillRef.current || !containerRef.current) return;
         quillRef.current = new Quill(containerRef.current, { theme: 'snow', modules: { toolbar: toolbarOptions } });
-        const handleTextChange = () => {
-            localStorage.setItem(
-                "fileContent",
-                JSON.stringify(quillRef.current?.getContents().ops)
-            );
-        };
-        quillRef.current.on("text-change", handleTextChange);
 
         return () => {
-            quillRef.current?.off("text-change", handleTextChange);
             if (containerRef.current) containerRef.current.innerHTML = '';
         };
     }, []);
 
     //another useEffect for quill changes
+    useEffect(() => {
+        const handleTextChange = () => {
+            console.log("Text changed, saving content to localStorage");
+            localStorage.setItem(
+                "fileContent",
+                JSON.stringify(quillRef.current?.getContents().ops)
+            );
+        };
+        quillRef.current?.on("text-change", handleTextChange);
+
+        return () => {
+            quillRef.current?.off("text-change", handleTextChange);
+        };
+
+    }, [quillRef.current]);
 
     return <div ref={containerRef}></div>;
 });
