@@ -58,6 +58,9 @@ const MainComponent = () => {
                 <button onClick={() => githubAuth()}>
                     Github Auth
                 </button>
+                <button onClick={() => useStore.getState().setSaveFile?.(true)}>
+                    Push to Repo
+                </button>
                 <button onClick={() => setShowAiSideBar(prev => !prev)}>
                     {showAiSideBar ? 'Hide' : 'Show'} AI
                 </button>
