@@ -1,4 +1,6 @@
-import FolderSection from "@/components/sidebar/FileExplorer"
+import FolderSection from "@/components/sidebar/FileExplorer";
+import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
+import ContextMenuDemo from "@/components/sidebar/CustomContextMenu2";
 
 const Sidebar: React.FC = () => {
     return (
@@ -12,9 +14,15 @@ const Sidebar: React.FC = () => {
                     <div className="mb-6">
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Thought Ink</h1>
                     </div>
+                    <ContextMenu>
+                        <ContextMenuTrigger className="file-explorer">
 
-                    <FolderSection />
+                            <FolderSection />
+                        </ContextMenuTrigger>
 
+                        <ContextMenuDemo />
+
+                    </ContextMenu>
                 </div>
             </div>
         </>
