@@ -10,9 +10,13 @@ interface BearState {
     setSaveFile?: (save: boolean) => void;
     isCreateFolderOpen?: boolean;
     setIsCreateFolderOpen?: (isOpen: boolean) => void;
+    isCreateFileOpen?: boolean;
+    setIsCreateFileOpen?: (isOpen: boolean) => void;
+    isDeleteDialogOpen?: boolean;
+    setIsDeleteDialogOpen?: (isOpen: boolean) => void;
     isContextMenuOpen?: boolean;
     setIsContextMenuOpen?: (isOpen: boolean) => void;
-    contextMenuItem?: any;
+    contextMenuItem?: FileItem | null;
     setContextMenuItem?: (item: FileItem) => void;
 }
 
@@ -30,7 +34,12 @@ export const useStore = create<BearState>((set) => ({
     //create folder modal state
     isCreateFolderOpen: false,
     setIsCreateFolderOpen: (isOpen: boolean) => set({ isCreateFolderOpen: isOpen }),
-
+    //create file modal state
+    isCreateFileOpen: false,
+    setIsCreateFileOpen: (isOpen: boolean) => set({ isCreateFileOpen: isOpen }),
+    //delete dialog state
+    isDeleteDialogOpen: false,
+    setIsDeleteDialogOpen: (isOpen: boolean) => set({ isDeleteDialogOpen: isOpen }),
     //contextmenu state 
     isContextMenuOpen: false,
     setIsContextMenuOpen: (isOpen: boolean) => set({ isContextMenuOpen: isOpen }),

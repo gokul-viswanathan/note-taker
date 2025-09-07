@@ -52,7 +52,7 @@ const FolderTree: React.FC<FolderTreeProps> = ({
     };
 
     return (
-        <div style={{ marginLeft: depth > 0 ? `${depth * 1.5}rem` : '0' }}>
+        <div style={{ marginLeft: depth > 0 ? `${depth * 0.5}rem` : '0' }}>
             {items.map((item, index) => (
                 <div key={`${item.path}-${index}`}>
                     {item.type === "dir" ? (

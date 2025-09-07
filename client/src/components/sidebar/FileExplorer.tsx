@@ -3,7 +3,8 @@ import { FileItem } from "@/types/git-interface";
 import CustomContextMenu from "@/components/sidebar/ContextMenu";
 import ContextMenuDemo from "@/components/sidebar/CustomContextMenu2";
 import fetchFiles from "@/services/getFiles";
-import FolderTree from "@/components/sidebar/FolderTree"
+// import FolderTree from "@/components/sidebar/FolderTree";
+import FolderTree from "@/components/sidebar/NewFolderTree";
 // import FolderTree from "@/components/sidebar/ShadFolderTree";
 import { useStore } from "@/stores/states";
 import updateFileItemChildren from "@/services/updateFileItemChildren";
@@ -15,7 +16,6 @@ const FileExplorer: React.FC = () => {
 
     const handleContextMenu = (item: FileItem) => {
         useStore.getState().setContextMenuItem?.(item);
-        console.log("context item set to:", item);
     };
 
     const fetchFolderContents = async (folderPath: string) => {
@@ -55,33 +55,17 @@ const FileExplorer: React.FC = () => {
     }, []);
 
     return (
-        <ContextMenu>
-            <ContextMenuTrigger className="file-explorer">
-                <FolderTree
-                    items={fileStructure}
-                    expandedFolders={expandedFolders}
-                    handleContextMenu={handleContextMenu}
-                    onToggleFolder={toggleFolder}
-                />
-            </ContextMenuTrigger>
 
-            <ContextMenuDemo />
+        < FolderTree
+            items={fileStructure}
+            expandedFolders={expandedFolders}
+            handleContextMenu={handleContextMenu}
+            onToggleFolder={toggleFolder}
+            isRootLevel={true} // Enable root level operations
+        />
 
-            {/* {menuPos && contextItem && (  
-
-                // <CustomContextMenu
-                //     position={menuPos}
-                //     item={contextItem}
-                //     onClose={() => {
-                //         console.log("onclose has been triggered");
-                //         setMenuPos(null);
-                //     }}
-                // />
-
-           )}  */}
-
-        </ContextMenu>
     );
 };
 
 export default FileExplorer;
+
