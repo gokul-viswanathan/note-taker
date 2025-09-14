@@ -1,10 +1,8 @@
-import FolderSection from "@/components/sidebar/FileExplorer"
-type SidebarProps = {
-    currentFile: string;
-    onFileSelect: (file: string) => void;
-};
+import FolderSection from "@/components/sidebar/FileExplorer";
+import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
+import ContextMenuDemo from "@/components/sidebar/CustomContextMenu2";
 
-const Sidebar: React.FC<SidebarProps> = ({ onFileSelect }) => {
+const Sidebar: React.FC = () => {
     return (
         <>
             <div
@@ -16,9 +14,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onFileSelect }) => {
                     <div className="mb-6">
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Thought Ink</h1>
                     </div>
+                    <ContextMenu>
+                        <ContextMenuTrigger className="file-explorer">
 
-                    <FolderSection onFileSelect={onFileSelect} />
+                            <FolderSection />
+                        </ContextMenuTrigger>
 
+                        <ContextMenuDemo />
+
+                    </ContextMenu>
                 </div>
             </div>
         </>

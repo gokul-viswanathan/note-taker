@@ -1,33 +1,41 @@
+import { Folder, FolderOpen, File, ChevronRight, Check, X } from 'lucide-react';
+
+// FolderIcon: Switches between Folder and FolderOpen based on isOpen prop
 const FolderIcon = ({ isOpen }: { isOpen?: boolean }) => (
-    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-        {isOpen ? (
-            <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
-        ) : (
-            <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
-        )}
-    </svg>
+    isOpen ? (
+        <FolderOpen className="w-4 h-4 mr-2" color="currentColor" />
+    ) : (
+        <Folder className="w-4 h-4 mr-2" color="currentColor" />
+    )
 );
 
+// FileIcon: Returns a generic File icon (customizable based on fileName if needed)
 const FileIcon = ({ fileName }: { fileName: string }) => {
     const getFileIcon = (name: string) => {
-        return (
-            <svg className="w-4 h-4 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm2 2h8v2H6V5zm0 4h8v2H6V9zm0 4h4v2H6v-2z" />
-            </svg>
-        );
+        // You can extend this logic to return different Lucide icons based on fileName
+        // For example, FileText for .txt, FileCode for .js/.ts, etc.
+        return <File className="w-4 h-4 mr-2 text-gray-400" color="currentColor" />;
     };
-
     return getFileIcon(fileName);
 };
 
+// ChevronIcon: Rotates based on isOpen prop
 const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
-    <svg
+    <ChevronRight
         className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-90' : ''}`}
-        fill="currentColor"
-        viewBox="0 0 20 20"
-    >
-        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-    </svg>
+        color="currentColor"
+    />
 );
 
-export { FolderIcon, FileIcon, ChevronIcon }
+// RightIcon: Maps to Lucide's Check icon (closest match for a "right" action)
+const RightIcon = () => (
+    <Check size={30} color="currentColor" strokeWidth={1.5} />
+);
+
+// CancelIcon: Maps to Lucide's X icon
+const CancelIcon = () => (
+    <X size={30} color="currentColor" strokeWidth={1.5} />
+);
+
+export { FolderIcon, FileIcon, ChevronIcon, RightIcon, CancelIcon };
+

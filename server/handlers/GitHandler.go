@@ -53,7 +53,7 @@ func GetFileContent(c *gin.Context) {
 	// to get file content given the path - end with file ext
 	user := c.Query("username")
 	repo := c.Query("repo")
-	path := c.Query("path") //path with the file name to get content
+	path := c.Query("subpath") //path with the file name to get content
 	authHeader := c.GetHeader("Authorization")
 	token := ""
 	if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
@@ -63,6 +63,8 @@ func GetFileContent(c *gin.Context) {
 	resp, err := gh.FileContent(c, user, repo, token, path)
 	if err != nil {
 		fmt.Println("Error occured during getting file content ", err)
+		c.IndentedJSON(http.StatusBadGateway, "error happended")
+		return
 	}
 
 	c.IndentedJSON(http.StatusOK, resp)
@@ -79,6 +81,27 @@ type Delta struct {
 	Attributes map[string]any `json:"attributes,omitempty"`
 }
 
+func CreateFolder(c *gin.Context) {
+	// to create new file
+	user := c.Query("username")
+	repo := c.Query("repo")
+	path := c.Query("path")
+	authHeader := c.GetHeader("Authorization")
+	token := ""
+	if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
+		token = strings.TrimPrefix(authHeader, "Bearer ")
+	}
+
+	sha := ""
+	currentUserObject := gh.NewGitHubClient(user, repo, token)
+	resp, err := currentUserObject.CreateOrUpdateFolder(path, sha)
+
+	if err != nil {
+		fmt.Println("the creation or updation process was not completed Successfully :", err)
+	}
+
+	c.IndentedJSON(http.StatusOK, resp)
+}
 func CreateFiles(c *gin.Context) {
 	// to create new file
 	user := c.Query("username")
@@ -125,8 +148,25 @@ func DeleteFile(c *gin.Context) {
 	if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
 		token = strings.TrimPrefix(authHeader, "Bearer ")
 	}
-
+	fmt.Println("Delete file called on ", path)
 	resp, err := gh.DeleteFile(user, repo, token, sha, path)
+	if err != nil {
+		fmt.Println("Error occured during file deletion ", err)
+	}
+	c.IndentedJSON(http.StatusOK, resp)
+}
+
+func DeleteFolder(c *gin.Context) {
+	user := c.Query("username")
+	repo := c.Query("repo")
+	path := c.Query("path")
+	authHeader := c.GetHeader("Authorization")
+	token := ""
+	if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
+		token = strings.TrimPrefix(authHeader, "Bearer ")
+	}
+	fmt.Println("Delete folder called on ", path)
+	resp, err := gh.DeleteDirectory(user, repo, token, path)
 	if err != nil {
 		fmt.Println("Error occured during file deletion ", err)
 	}

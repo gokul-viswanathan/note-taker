@@ -1,6 +1,6 @@
 import getBaseURL from '@/utils/baseURL';
 
-const fetchFiles = async (path: string) => {
+const fetchFileContent = async (path: string) => {
 
     const username = localStorage.getItem("username") || process.env.NEXT_PUBLIC_USER;
     const repo = localStorage.getItem("repo") || process.env.NEXT_PUBLIC_REPO;
@@ -8,7 +8,9 @@ const fetchFiles = async (path: string) => {
     const baseURL = getBaseURL();
 
     const subpath = path.split("/").map(encodeURIComponent).join("/");
-    const url = `${baseURL}/v1/files?username=${username}&repo=${repo}&subpath=${subpath}`;
+    const url = `${baseURL}/v1/filecontent?username=${username}&repo=${repo}&subpath=${subpath}`;
+    console.log("Fetching file content from URL:", url);
+
     try {
         const response = await fetch(url, {
             method: "GET",
@@ -30,4 +32,4 @@ const fetchFiles = async (path: string) => {
     }
 };
 
-export default fetchFiles;
+export default fetchFileContent;

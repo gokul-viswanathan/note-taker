@@ -1,39 +1,49 @@
-// import Image from "next/image";
 'use client'
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 
-import QuillEditor from "@/components/QuillEditor"
+const QuillEditor = dynamic(
+    () => import('@/components/NewQuillEditor'),
+    {
+        ssr: false,
+        loading: () => <div>Loading editor...</div>
+    }
+);
 import SideBar from "@/components/sidebar/SideBar"
 // import AiSideBar from "@/components/aiSideBar";
 import ResizableSidebar from '@/components/ResizableSidebar';
-
 import githubAuth from "@/services/oauth";
-// import fetchFiles from "@/services/getFiles";
-// import { FileItem } from "@/types/git-interface";
+import { useStore } from '@/stores/states';
+import { FileItem } from '@/types/git-interface';
 
 
 const MainComponent = () => {
     const [showFileSideBar, setShowFileSideBar] = useState(true);
     const [showAiSideBar, setShowAiSideBar] = useState(true);
-    const [currentFile, setCurrentFile] = useState("");
+    const currentFile = useStore((state) => state.currentFile);
 
-    // useEffect(() => {
-    //     const loadFiles = async () => {
-    //         try {
-    //             const data = await fetchFiles(username, repo, subpath, token);
-    //             setFiles(data);
-    //         } catch (error) {
-    //             console.error("Error fetching files:", error);
-    //         }
-    //     };
-    //
-    //     loadFiles(); // Call the async function inside useEffect
-    // }, [username, repo, subpath, token]);
-    //
+    useEffect(() => {
+        const savedFile = localStorage.getItem("currentFile");
+        if (savedFile) {
+            try {
+                const parsedFile: FileItem = JSON.parse(savedFile);
+                if (parsedFile) useStore.setState({ currentFile: parsedFile });
+            } catch (error) {
+                console.error("Failed to parse saved file from localStorage:", error);
+                // Optionally clear the corrupted data
+                localStorage.removeItem("currentFile");
+            }
+        }
+    }, []);
 
-    function setChoosenFile(content: string) {
-        setCurrentFile(content)
-    }
+    useEffect(() => {
+        if (currentFile) {
+            localStorage.setItem("currentFile", JSON.stringify(currentFile));
+        } else {
+            // Remove from localStorage if currentFile is null/undefined
+            localStorage.removeItem("currentFile");
+        }
+    }, [currentFile]);
 
     return (
         <div className="h-screen bg-stone-950">
@@ -46,24 +56,26 @@ const MainComponent = () => {
                 <button onClick={() => githubAuth()}>
                     Github Auth
                 </button>
+                <button onClick={() => useStore.getState().setSaveFile?.(true)}>
+                    Push to Repo
+                </button>
                 <button onClick={() => setShowAiSideBar(prev => !prev)}>
                     {showAiSideBar ? 'Hide' : 'Show'} AI
                 </button>
             </div>
 
+            {/* TODO: reduce the height of the editor to fit the header*/}
+
             <div className="flex">
                 {/* Left sidebar */}
                 {showFileSideBar && (<ResizableSidebar side="left">
-                    <SideBar
-                        onFileSelect={setChoosenFile}
-                        currentFile={currentFile}
-                    />
+                    <SideBar />
                 </ResizableSidebar>)}
 
 
                 {/* Editor */}
-                <div className="flex-1 overflow-hidden">
-                    <QuillEditor currentFile={currentFile} />
+                <div className="Editor dark flex-1 overflow-hidden">
+                    <QuillEditor />
                 </div>
 
                 {/* Right AI sidebar */}
