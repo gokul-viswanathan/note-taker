@@ -20,7 +20,8 @@ func main() {
 	router.POST("/api/v1/filecontent", handlers.CreateFiles)
 	router.PUT("/api/v1/folder", handlers.CreateFolder)
 	router.POST("/api/v1/oauth/callback", handlers.OAuthCallback)
-	router.DELETE("/api/v1/delete", handlers.DeleteFile)
+	router.DELETE("/api/v1/deleteFile", handlers.DeleteFile)
+	router.DELETE("/api/v1/deleteFolder", handlers.DeleteFolder)
 
 	router.Run("localhost:8080")
 }
@@ -43,7 +44,7 @@ func corsMiddleware() gin.HandlerFunc {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 			c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 			c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-CSRF-Token, Cache-Control, X-Requested-With")
-			c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+			c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, DELETE, OPTIONS, GET, PUT")
 		}
 
 		if c.Request.Method == "OPTIONS" {

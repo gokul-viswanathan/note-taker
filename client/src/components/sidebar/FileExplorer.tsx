@@ -1,16 +1,12 @@
 import react from "react";
 import { FileItem } from "@/types/git-interface";
-import CustomContextMenu from "@/components/sidebar/ContextMenu";
-import ContextMenuDemo from "@/components/sidebar/CustomContextMenu2";
 import fetchFiles from "@/services/getFiles";
-// import FolderTree from "@/components/sidebar/FolderTree";
 import FolderTree from "@/components/sidebar/NewFolderTree";
-// import FolderTree from "@/components/sidebar/ShadFolderTree";
 import { useStore } from "@/stores/states";
 import updateFileItemChildren from "@/services/updateFileItemChildren";
-import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
 
 const FileExplorer: React.FC = () => {
+
     const [expandedFolders, setExpandedFolders] = react.useState<Set<string>>(new Set());
     const [fileStructure, setFileStructure] = react.useState<FileItem[]>([]);
 

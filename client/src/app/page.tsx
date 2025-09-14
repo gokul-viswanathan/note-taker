@@ -9,8 +9,6 @@ const QuillEditor = dynamic(
         loading: () => <div>Loading editor...</div>
     }
 );
-// import QuillEditor from "@/components/QuillEditor"
-// import QuillEditor from "@/components/NewQuillEditor";
 import SideBar from "@/components/sidebar/SideBar"
 // import AiSideBar from "@/components/aiSideBar";
 import ResizableSidebar from '@/components/ResizableSidebar';

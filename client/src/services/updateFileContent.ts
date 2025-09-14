@@ -2,7 +2,7 @@
 import getBaseURL from '@/utils/baseURL';
 import { FileItem } from '@/types/git-interface'
 
-const updateFileContent = async (currentFile: FileItem, content: JSON) => {
+const updateFileContent = async (currentFile: FileItem, content: any) => {
 
     const username = localStorage.getItem("username") || process.env.NEXT_PUBLIC_USER;
     const repo = localStorage.getItem("repo") || process.env.NEXT_PUBLIC_REPO;
@@ -24,8 +24,8 @@ const updateFileContent = async (currentFile: FileItem, content: JSON) => {
 
     const requestBody = {
         content: content,
-        sha: currentFile.sha,
-        commitMessage: `Update ${currentFile.path} via Quill Editor`
+        sha: currentFile.sha || "",
+        commitMessage: currentFile.sha ? `Update ${currentFile.path} via Quill Editor` : 'Create file at path ${currentFile.path}'
     };
 
     try {

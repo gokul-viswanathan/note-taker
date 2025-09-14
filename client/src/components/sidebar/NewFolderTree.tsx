@@ -1,16 +1,11 @@
 import { FolderIcon, ChevronIcon, FileIcon, RightIcon, CancelIcon } from "@/components/sidebar/Icons"
 import { useStore } from "@/stores/states";
 import { useEffect, useState } from "react";
-import { createNewFolder } from "@/services/createNewFile";
-import { GitFileItem } from "@/types/git-interface";
+import { createNewFolder } from "@/services/createNewFolder";
+import { GitFileItem, FileItem } from "@/types/git-interface";
 import { Input } from "@/components/ui/input"
-
-interface FileItem {
-    name: string;
-    type: "file" | "dir";
-    path: string; // Full path to the item
-    children?: FileItem[]; // For directories, contains subdirectories and files
-}
+import updateFileContent from "@/services/updateFileContent";
+import { deleteFileOrFolder } from "@/services/deleteFileOrFolder"
 
 interface FolderTreeProps {
     items: FileItem[];
@@ -43,16 +38,17 @@ const FolderTree: React.FC<FolderTreeProps> = ({
     const [creationType, setCreationType] = useState<"file" | "folder">("folder");
 
     const handleFileSelect = (selectedFile: GitFileItem) => {
-        console.log("Selected file:", selectedFile);
         useStore.getState().setCurrentFile?.(selectedFile);
     }
 
     const handleCreateFolder = async () => {
         const pathToCreateNewFolder = contextMenuItem?.path || "";
         const pathOfNewFolder = pathToCreateNewFolder + "/" + newName + "/";
+        console.log("path to creating new folder ", pathOfNewFolder)
         try {
             await createNewFolder(pathOfNewFolder);
             setNewName("");
+            //TODO: path should also be updated.
             setIsCreateFolderOpen?.(false);
         } catch (error) {
             console.error("Failed to create folder:", error);
@@ -62,16 +58,15 @@ const FolderTree: React.FC<FolderTreeProps> = ({
     const handleCreateFile = async () => {
         const pathToCreateNewFile = contextMenuItem?.path || "";
         const pathOfNewFile = pathToCreateNewFile + "/" + newName; // add json to it
-        console.log("Create file method called");
+        console.log("path to creating new file ", pathOfNewFile)
         try {
-            // 1) add file to the github
-            // 2) chnage current file
-            // 3) find way to refresh folder structure
+            //TODO: 3) find way to refresh folder structure
             const newFile: FileItem = {
                 name: newName,
                 path: pathOfNewFile,
-                type: "file"
+                type: "file",
             }
+            await updateFileContent(newFile, null)
             useStore.getState().setCurrentFile?.(newFile)
             setNewName("");
             setIsCreateFileOpen?.(false);
@@ -83,8 +78,8 @@ const FolderTree: React.FC<FolderTreeProps> = ({
     const handleDelete = async () => {
         if (contextMenuItem) {
             try {
-                // You'll need to implement deleteItem service
-                await deleteItem(contextMenuItem.path);
+                console.log("the context menu item is ", contextMenuItem)
+                await deleteFileOrFolder(contextMenuItem);
                 setIsDeleteDialogOpen?.(false);
             } catch (error) {
                 console.error("Failed to delete item:", error);
@@ -273,13 +268,6 @@ const FolderTree: React.FC<FolderTreeProps> = ({
             )}
         </div>
     );
-};
-
-const deleteItem = async (path: string) => {
-    // Implement deletion logic
-    console.log("Deleting item at:", path);
-    // Example API call:
-    // await fetch(`/api/files?path=${encodeURIComponent(path)}`, { method: 'DELETE' });
 };
 
 export default FolderTree;
