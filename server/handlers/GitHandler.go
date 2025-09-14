@@ -148,8 +148,25 @@ func DeleteFile(c *gin.Context) {
 	if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
 		token = strings.TrimPrefix(authHeader, "Bearer ")
 	}
-
+	fmt.Println("Delete file called on ", path)
 	resp, err := gh.DeleteFile(user, repo, token, sha, path)
+	if err != nil {
+		fmt.Println("Error occured during file deletion ", err)
+	}
+	c.IndentedJSON(http.StatusOK, resp)
+}
+
+func DeleteFolder(c *gin.Context) {
+	user := c.Query("username")
+	repo := c.Query("repo")
+	path := c.Query("path")
+	authHeader := c.GetHeader("Authorization")
+	token := ""
+	if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
+		token = strings.TrimPrefix(authHeader, "Bearer ")
+	}
+	fmt.Println("Delete folder called on ", path)
+	resp, err := gh.DeleteDirectory(user, repo, token, path)
 	if err != nil {
 		fmt.Println("Error occured during file deletion ", err)
 	}
