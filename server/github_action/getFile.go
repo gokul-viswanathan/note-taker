@@ -80,7 +80,7 @@ func FileNames(ctx context.Context, owner, repo, token, path string) ([]utils.Re
 
 		return nil, fmt.Errorf("failed to parse response as JSON: %w", err)
 	}
-	fmt.Print("the contents form Github ", contents)
+	// fmt.Print("the contents form Github ", contents)
 	// Convert to RepoItem slice
 	items := make([]utils.RepoItem, 0, len(contents))
 	for _, item := range contents {

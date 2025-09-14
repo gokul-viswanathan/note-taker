@@ -1,64 +1,19 @@
-import { useState, useEffect } from "react";
-import { GitFileItem } from "@/types/git-interface";
-import CustomContextMenu from "@/components/sidebar/ContextMenu";
+import react from "react";
+import { FileItem } from "@/types/git-interface";
 import fetchFiles from "@/services/getFiles";
-import FolderTree from "@/components/sidebar/FolderTree"
+import FolderTree from "@/components/sidebar/NewFolderTree";
+import { useStore } from "@/stores/states";
+import updateFileItemChildren from "@/services/updateFileItemChildren";
 
+const FileExplorer: React.FC = () => {
 
-type FileExplorerProps = {
-    onFileSelect: (fileName: string) => void;
-}
+    const [expandedFolders, setExpandedFolders] = react.useState<Set<string>>(new Set());
+    const [fileStructure, setFileStructure] = react.useState<FileItem[]>([]);
 
-// this is what node contains. but gitfileitem is type of the input message
-interface FileItem extends GitFileItem {
-    children?: FileItem[]; // For directories, contains subdirectories and files
-}
-
-function updateFileItemChildren(
-    tree: FileItem[],
-    targetPath: string,
-    newChildren: FileItem[]
-): FileItem[] {
-    return tree.map(item => {
-        if (item.path === targetPath && item.type === 'dir') {
-            return {
-                ...item,
-                children: newChildren
-            };
-        }
-
-        if (item.children) {
-            return {
-                ...item,
-                children: updateFileItemChildren(item.children, targetPath, newChildren)
-            };
-        }
-
-        return item;
-    });
-}
-
-const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
-    const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
-    const [currentFile, setCurrentFile] = useState<string>("");
-    const [fileStructure, setFileStructure] = useState<FileItem[]>([]);
-
-    const [menuPos, setMenuPos] = useState<{ x: number; y: number } | null>(null);
-    const [contextItem, setContextItem] = useState<FileItem | null>(null);
-
-    const handleFileSelect = (fileName: string, fullPath: string) => {
-        setCurrentFile(fullPath);
-        // Handle file selection logic
-        // onFileSelect();
+    const handleContextMenu = (item: FileItem) => {
+        useStore.getState().setContextMenuItem?.(item);
     };
 
-    const handleContextMenu = (e: React.MouseEvent, item: FileItem) => {
-        e.preventDefault();
-        setMenuPos({ x: e.clientX, y: e.clientY });
-        setContextItem(item);
-    };
-
-    // Function to dynamically load folder contents
     const fetchFolderContents = async (folderPath: string) => {
         try {
             const currentPathData = await fetchFiles(folderPath);
@@ -91,33 +46,22 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
         setExpandedFolders(localExpandedFolders);
     };
 
-    useEffect(() => {
+    react.useEffect(() => {
         fetchFolderContents("");
     }, []);
 
     return (
-        <div className="file-explorer">
-            <FolderTree
-                items={fileStructure}
-                currentFile={currentFile}
-                expandedFolders={expandedFolders}
-                onFileSelect={handleFileSelect}
-                onToggleFolder={toggleFolder}
-                onContextMenu={handleContextMenu}
-            />
 
-            {menuPos && contextItem && (
-                <CustomContextMenu
-                    position={menuPos}
-                    item={contextItem}
-                    onClose={() => {
-                        console.log("onclose has been triggered");
-                        setMenuPos(null);
-                    }}
-                />
-            )}
-        </div>
+        < FolderTree
+            items={fileStructure}
+            expandedFolders={expandedFolders}
+            handleContextMenu={handleContextMenu}
+            onToggleFolder={toggleFolder}
+            isRootLevel={true} // Enable root level operations
+        />
+
     );
 };
 
 export default FileExplorer;
+
