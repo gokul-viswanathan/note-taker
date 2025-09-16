@@ -20,7 +20,7 @@ const Callback = () => {
             return;
         }
 
-        // POST the code to your backend
+        // TODO: fix the static  page logic
         const backendURL = "http://localhost:8080"
         fetch(`${backendURL}/api/v1/oauth/callback`, {
             method: "POST",
