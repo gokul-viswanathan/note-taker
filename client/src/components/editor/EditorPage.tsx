@@ -73,7 +73,7 @@ const MainComponent = () => {
 
 
                 {/* Editor */}
-                <div className="Editor dark flex-1 overflow-hidden">
+                <div className="Editor flex-1 overflow-hidden">
                     <QuillEditor />
                 </div>
 
