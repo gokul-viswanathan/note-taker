@@ -87,6 +87,10 @@ const Editor = forwardRef((props, forwardedRef): React.JSX.Element => {
             saveContent()
         }
 
+        return () => {
+            setSaveFile?.(false)
+        }
+
     }, [saveFile]);
 
     useEffect(() => {

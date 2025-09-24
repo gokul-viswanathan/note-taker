@@ -47,7 +47,7 @@ const MainComponent = () => {
     }, [currentFile]);
 
     function handlePushToRepo() {
-        console.log("push to repo")
+        useStore.getState().setSaveFile?.(true);
     }
     return (
         <div className="h-screen bg-stone-950">
