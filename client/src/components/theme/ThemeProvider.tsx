@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext({
-    darkMode: false,
+    darkMode: true,
     toggleTheme: () => { console.log("the toogle theme method works") }
 });
 

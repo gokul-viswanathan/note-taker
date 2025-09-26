@@ -1,8 +1,10 @@
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { Moon, Sun, Github, FileText, GitBranch, Shield, Zap, Clock, Brain, Sparkles, ArrowRight, Star } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function LandingPage() {
 
+    const router = useRouter();
     const { darkMode, toggleTheme } = useTheme();
     const features = [
         {
@@ -43,6 +45,10 @@ export default function LandingPage() {
             description: "Connect any LLM to enhance your notes with smart suggestions and insights."
         }
     ];
+
+    function handleNavigation() {
+        router.push('/notepad');
+    }
 
     return (
 
@@ -91,13 +97,9 @@ export default function LandingPage() {
                             </div>
 
                             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                                <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center">
+                                <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center" onClick={handleNavigation}>
                                     Start Writing
                                     <ArrowRight className="w-5 h-5 ml-2" />
-                                </button>
-                                <button className="px-8 py-4 border-2 border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 rounded-xl font-semibold hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200 flex items-center justify-center">
-                                    <Github className="w-5 h-5 mr-2" />
-                                    Connect GitHub
                                 </button>
                             </div>
                         </div>

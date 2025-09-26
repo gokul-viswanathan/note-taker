@@ -25,8 +25,8 @@ func OAuthCallback(c *gin.Context) {
 	code := req.Code
 	log.Println("Received code:", code)
 
-	accesstoken := gh.Authentication(code)
-	c.JSON(http.StatusOK, accesstoken)
+	userGitData := gh.Authentication(code)
+	c.JSON(http.StatusOK, userGitData)
 }
 
 func GetFiles(c *gin.Context) {

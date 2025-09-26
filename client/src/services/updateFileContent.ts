@@ -13,15 +13,6 @@ const updateFileContent = async (currentFile: FileItem, content: any) => {
     const url = `${baseURL}/v1/filecontent?username=${username}&repo=${repo}&path=${subpath}`;
     console.log("Updateing file content to URL:", url);
 
-    // user:= c.Query("username")
-    // repo:= c.Query("repo")
-    // path:= c.Query("path")
-    // authHeader:= c.GetHeader("Authorization")
-    //
-    // content:= body.Content
-    // sha:= body.SHA
-    // commitMessage:= body.CommitMessage
-
     const requestBody = {
         content: content,
         sha: currentFile.sha || "",
