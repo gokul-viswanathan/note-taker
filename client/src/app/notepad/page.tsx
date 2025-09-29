@@ -9,7 +9,7 @@ const NotePadPage = () => {
     const [authState, setAuthState] = useState('checking'); // 'checking', 'authenticated', 'unauthenticated'
 
     useEffect(() => {
-        const githubAuth = localStorage.getItem('github_auth');
+        const githubAuth = localStorage.getItem('user_github_data');
         if (githubAuth) {
             setAuthState('authenticated');
         } else {

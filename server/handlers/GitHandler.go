@@ -26,7 +26,12 @@ func OAuthCallback(c *gin.Context) {
 	log.Println("Received code:", code)
 
 	userGitData := gh.Authentication(code)
-	c.JSON(http.StatusOK, userGitData)
+	encodedUserGitData, err := json.Marshal(userGitData)
+	if err != nil {
+		log.Println("Error while encoding Marshal on user oAUth and git data")
+		c.JSON(http.StatusBadGateway, nil)
+	}
+	c.JSON(http.StatusOK, encodedUserGitData)
 }
 
 func GetFiles(c *gin.Context) {

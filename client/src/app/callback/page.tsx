@@ -48,7 +48,7 @@ const Callback = () => {
                     setStatusType('success');
 
                     // Store the actual response data instead of res.body
-                    localStorage.setItem("github_auth", JSON.stringify(data));
+                    localStorage.setItem("user_github_data", JSON.stringify(data));
 
                     // Show success message briefly before redirect
                     setTimeout(() => {

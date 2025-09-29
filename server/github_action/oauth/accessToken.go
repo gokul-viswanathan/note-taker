@@ -50,11 +50,7 @@ func TokenAuthentication(code string) string {
 		return "err"
 	}
 
-	fmt.Println("the access toke for the current user is ", tokenResp.AccessToken)
+	fmt.Println("the access toke for the current user is ", tokenResp)
 
-	//1) get user info with the token
-	//2) check if repo exisitis
-	// yes: return back with username, reponame, token and save it
-	// no: create a repo and handle everything.
 	return tokenResp.AccessToken
 }
