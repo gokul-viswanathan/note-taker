@@ -45,12 +45,12 @@ const Callback = () => {
         })
             .then(async (res) => {
                 if (res.ok) {
-                    const data = await res.json();
+                    const response = await res.json();
                     setStatus("Authorization successful! Setting up your account...");
                     setStatusType('success');
-
+                    const data = response.data;
                     // Store the actual response data instead of res.body
-                    localStorage.setItem("user_github_data", JSON.stringify(data));
+                    localStorage.setItem("user_github_data", data);
                     console.log("the github Authentication data is ", data)
                     // Show success message briefly before redirect
                     setTimeout(() => {
