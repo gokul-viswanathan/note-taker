@@ -25,6 +25,7 @@ func checkRepoExists(username, repo, token string) bool {
 		return false
 	}
 	defer resp.Body.Close()
+	fmt.Print("the body of checking if repo already exisits ", resp.Body)
 
 	if resp.StatusCode == 200 {
 		fmt.Println("Repo exists")
@@ -38,7 +39,7 @@ func checkRepoExists(username, repo, token string) bool {
 func createRepo(username, reponame, token string) bool {
 	url := "https://api.github.com/user/repos"
 
-	token = "u"
+	// token = "u"
 	jsonBody := fmt.Sprintf(`{"name":"%s","private":true,"description":"Storage for Thought Ink notes application"}`, reponame)
 	req, err := http.NewRequest("POST", url, strings.NewReader(jsonBody))
 	if err != nil {

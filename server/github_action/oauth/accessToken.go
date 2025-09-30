@@ -17,8 +17,8 @@ type GitHubTokenResponse struct {
 
 func TokenAuthentication(code string) string {
 
-	clientID := "Iv23liOSDKA05BdSC59m"
-	clientSecret := "87343b07f75baa54d6d456cda7444443495be641"
+	clientID := "Ov23liJs7CaOYS4hDOqB"
+	clientSecret := "2d42995c0213613a37d30a5c9220070e3b72a0b6"
 
 	url := "https://github.com/login/oauth/access_token"
 	payload := map[string]string{
