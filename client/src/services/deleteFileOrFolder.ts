@@ -1,20 +1,16 @@
 import { FileItem } from '@/types/git-interface';
 import getBaseURL from '@/utils/baseURL';
+import { getGithubConfig } from '@/utils/storage';
 
 export const deleteFileOrFolder = async (file: FileItem) => {
 
-    const username = localStorage.getItem("username") || process.env.NEXT_PUBLIC_USER;
-    const repo = localStorage.getItem("repo") || process.env.NEXT_PUBLIC_REPO;
-    const token = localStorage.getItem("token") || process.env.NEXT_PUBLIC_TOKEN;
     const baseURL = getBaseURL();
+    const githubConfig = getGithubConfig();
+    if (!githubConfig?.username || !githubConfig?.repo || !githubConfig?.token) {
+        throw new Error('Missing GitHub configuration');
+    }
+    const { username, repo, token } = githubConfig;
     const path = file.path.split("/").map(encodeURIComponent).join("/");
-
-    // router.DELETE("/api/v1/delete", handlers.DeleteFile)
-    // user := c.Query("username")
-    // repo := c.Query("repo")
-    // path := c.Query("path")
-    // sha := c.Query("sha")
-    // authHeader := c.GetHeader("Authorization")
 
     let url = ""
     if (file.type == "file") {

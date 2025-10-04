@@ -1,11 +1,15 @@
 import getBaseURL from '@/utils/baseURL';
+import { getGithubConfig } from '@/utils/storage';
 
 export const createNewFolder = async (path: string) => {
 
-    const username = localStorage.getItem("username") || process.env.NEXT_PUBLIC_USER;
-    const repo = localStorage.getItem("repo") || process.env.NEXT_PUBLIC_REPO;
-    const token = localStorage.getItem("token") || process.env.NEXT_PUBLIC_TOKEN;
     const baseURL = getBaseURL();
+    const githubConfig = getGithubConfig();
+    if (!githubConfig?.username || !githubConfig?.repo || !githubConfig?.token) {
+        throw new Error('Missing GitHub configuration');
+    }
+    const { username, repo, token } = githubConfig;
+
     const subpath = path.split("/").map(encodeURIComponent).join("/");
 
     const url = `${baseURL}/v1/folder?username=${username}&repo=${repo}&path=${subpath}`;

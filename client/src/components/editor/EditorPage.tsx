@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useStore } from '@/stores/states';
-import SideBar from "@/components/sidebar/SideBar"
+// import SideBar from "@/components/sidebar/SideBar"
+import SideBar from "@/components/shadcnSidebar/Sidebar";
 // import AiSideBar from "@/components/aiSideBar";
 import ResizableSidebar from '@/components/ResizableSidebar';
 import ThoughtInkHeader from '@/components/header/ThoughtInkHeader';
-import githubAuth from "@/services/oauth";
 import { FileItem } from '@/types/git-interface';
 import { useTheme } from '@/components/theme/ThemeProvider';
 
@@ -39,6 +39,20 @@ const MainComponent = () => {
     }, []);
 
     useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 768) { // md breakpoint
+                setShowFileSideBar(false);
+                setShowAiSideBar(false);
+            } else {
+                // Optionally show on larger screens, but keep user preference
+            }
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
         if (currentFile) {
             localStorage.setItem("currentFile", JSON.stringify(currentFile));
         } else {
@@ -50,7 +64,7 @@ const MainComponent = () => {
         useStore.getState().setSaveFile?.(true);
     }
     return (
-        <div className="h-screen bg-stone-950">
+        <div className="h-screen flex flex-col bg-stone-950">
 
             <ThoughtInkHeader
                 currentFile={typeof currentFile === "string" ? currentFile : currentFile?.path}
@@ -63,9 +77,7 @@ const MainComponent = () => {
                 onPushToRepo={handlePushToRepo}
             />
 
-            {/* TODO: reduce the height of the editor to fit the header*/}
-
-            <div className="flex">
+            <div className="flex flex-1 overflow-hidden">
                 {/* Left sidebar */}
                 {showFileSideBar && (<ResizableSidebar side="left">
                     <SideBar />
