@@ -42,8 +42,6 @@ const FolderTree: React.FC = () => {
     if (expandedFolders.has(folderPath)) {
       localExpandedFolders.delete(folderPath);
     } else {
-      //console.log("adding something");
-
       localExpandedFolders.add(folderPath);
       try {
         await fetchFolderContents(folderPath);
