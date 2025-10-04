@@ -5,25 +5,28 @@ import {
   ContextMenuShortcut,
 } from "@/components/ui/context-menu";
 import { useStore } from "@/stores/states";
+import { useEffect } from "react";
 
 const ContextMenuDemo: React.FC = () => {
-  const contextMenuItem = useStore.getState().contextMenuItem;
+  const contextMenuItem = useStore((state) => state.contextMenuItem);
   const handleCreateFolder = () => {
-    console.log("Create new folder clicked");
+    console.log("Create new folder clicked", contextMenuItem);
     useStore.getState().setIsCreateFolderOpen?.(true);
   };
 
   const handleCreateFile = () => {
-    console.log("Create new file clicked");
-    // Implement create file logic here
+    console.log("Create new file clicked", contextMenuItem);
     useStore.getState().setIsCreateFileOpen?.(true);
   };
 
   const handleDelete = () => {
-    console.log("Delete clicked");
-    // Implement delete logic here
+    console.log("Delete clicked", contextMenuItem);
     useStore.getState().setIsDeleteDialogOpen?.(true);
   };
+
+  useEffect(() => {
+    console.log("context menu item in state ", contextMenuItem);
+  }, [contextMenuItem]);
 
   if (contextMenuItem?.type == "file") {
     return (

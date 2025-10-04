@@ -4,6 +4,9 @@ import fetchFiles from "@/services/getFiles";
 import updateFileItemChildren from "@/services/updateFileItemChildren";
 import { useState, useEffect } from "react";
 import FileTreeItem from "@/components/shadcnSidebar/FileTreeItem";
+import { ContextMenu } from "@/components/ui/context-menu";
+import { ContextMenuTrigger } from "@radix-ui/react-context-menu";
+import ContextMenuDemo from "@/components/sidebar/CustomContextMenu2";
 
 interface FolderTree {
   fileStructure: FileItem[];
@@ -58,14 +61,19 @@ const FolderTree: React.FC = () => {
 
   return (
     <SidebarMenu>
-      {fileStructure.map((items) => (
-        <FileTreeItem
-          key={items.path}
-          item={items}
-          onToggleFolder={toggleFolder}
-          level={1}
-        />
-      ))}
+      <ContextMenu>
+        <ContextMenuTrigger>
+          {fileStructure.map((items) => (
+            <FileTreeItem
+              key={items.path}
+              item={items}
+              onToggleFolder={toggleFolder}
+              level={1}
+            />
+          ))}
+        </ContextMenuTrigger>
+        <ContextMenuDemo />
+      </ContextMenu>
     </SidebarMenu>
   );
 };
