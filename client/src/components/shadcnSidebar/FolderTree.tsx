@@ -1,4 +1,4 @@
-import { SidebarMenu } from "../ui/sidebar";
+
 import { FileItem } from "@/types/git-interface";
 import fetchFiles from "@/services/getFiles";
 import updateFileItemChildren from "@/services/updateFileItemChildren";
@@ -59,22 +59,25 @@ const FolderTree: React.FC = () => {
     fetchFolderContents("");
   }, []);
 
+  const handleFileCreated = () => {
+    fetchFolderContents("");
+  };
+
   return (
-    <SidebarMenu>
-      <ContextMenu>
-        <ContextMenuTrigger>
-          {fileStructure.map((items) => (
-            <FileTreeItem
-              key={items.path}
-              item={items}
-              onToggleFolder={toggleFolder}
-              level={1}
-            />
-          ))}
-        </ContextMenuTrigger>
-        <ContextMenuDemo />
-      </ContextMenu>
-    </SidebarMenu>
+    <ContextMenu>
+      <ContextMenuTrigger>
+        {fileStructure.map((items) => (
+          <FileTreeItem
+            key={items.path}
+            item={items}
+            onToggleFolder={toggleFolder}
+            onFileCreated={handleFileCreated}
+            level={1}
+          />
+        ))}
+      </ContextMenuTrigger>
+      <ContextMenuDemo />
+    </ContextMenu>
   );
 };
 

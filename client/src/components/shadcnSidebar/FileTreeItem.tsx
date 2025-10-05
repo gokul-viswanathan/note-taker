@@ -11,28 +11,36 @@ import {
 import { Folder, File } from "lucide-react";
 import { FileItem } from "@/types/git-interface";
 import { useStore } from "@/stores/states";
-import { useEffect } from "react";
-import {
-  ContextMenu,
-  ContextMenuTrigger,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-} from "@/components/ui/context-menu";
+import { useFileCreation } from "@/hooks/useFileCreation";
+import CreateInputField from "@/components/ui/CreateInputField";
 
 interface FileTreeProp {
   item: FileItem;
   onToggleFolder: (path: string) => void;
+  onFileCreated?: () => void;
   level?: number;
 }
 
 const FileTreeItem: React.FC<FileTreeProp> = ({
   item,
   onToggleFolder,
+  onFileCreated,
   level = 1,
 }) => {
+  const isCreateFileDialogBoxOpen = useStore((state) => state.isCreateFileOpen);
+  const isCreateFolderDialogBoxOpen = useStore(
+    (state) => state.isCreateFolderOpen,
+  );
+  const creationType = isCreateFileDialogBoxOpen ? "file" : "folder";
+  const currentContextMenuItem = useStore((state) => state.contextMenuItem);
+
+  const { inputValue, setInputValue, handleKeyDown, handleCancel } = useFileCreation({
+    creationType,
+    parentPath: currentContextMenuItem?.path || "",
+    onSuccess: onFileCreated,
+  });
+
   const handleFolderOrFileClick = (item: FileItem) => {
-    console.log("the clikced item is %s of type %s", item.name, item.type);
     if (item.type == "dir") {
       onToggleFolder(item.path);
     } else {
@@ -42,6 +50,25 @@ const FileTreeItem: React.FC<FileTreeProp> = ({
 
   const contextMenuUpdate = (item: FileItem) => {
     useStore.getState().setContextMenuItem?.(item);
+  };
+
+  const showContextMenuSubItem = () => {
+    return (
+      (item.children && item.children.length > 0) ||
+      isCreateFileDialogBoxOpen ||
+      isCreateFolderDialogBoxOpen
+    );
+  };
+
+  const showInputBox = () => {
+    return (
+      (isCreateFolderDialogBoxOpen || isCreateFileDialogBoxOpen) &&
+      item.path === currentContextMenuItem?.path
+    );
+  };
+
+  const showChildItems = () => {
+    return item.children && item.children?.length > 0;
   };
 
   if (item.type === "file") {
@@ -75,17 +102,32 @@ const FileTreeItem: React.FC<FileTreeProp> = ({
             <span>{item.name}</span>
           </SidebarMenuButton>
         </CollapsibleTrigger>
-        {item.children && item.children.length > 0 && (
+
+        {showContextMenuSubItem() && (
           <CollapsibleContent>
             <SidebarMenuSub>
-              {item.children.map((child) => (
-                <FileTreeItem
-                  key={child.path}
-                  item={child}
-                  onToggleFolder={onToggleFolder}
-                  level={level + 1}
-                />
-              ))}
+              {/* sidebarmenu item as the input field under the folder. handle root as well */}
+              {showInputBox() && (
+                <SidebarMenuItem>
+                  <CreateInputField
+                    inputValue={inputValue}
+                    setInputValue={setInputValue}
+                    creationType={creationType}
+                    onKeyDown={handleKeyDown}
+                    onCancel={handleCancel}
+                  />
+                </SidebarMenuItem>
+              )}
+              {showChildItems() &&
+                item.children?.map((child) => (
+                  <FileTreeItem
+                    key={child.path}
+                    item={child}
+                    onToggleFolder={onToggleFolder}
+                    onFileCreated={onFileCreated}
+                    level={level + 1}
+                  />
+                ))}
             </SidebarMenuSub>
           </CollapsibleContent>
         )}

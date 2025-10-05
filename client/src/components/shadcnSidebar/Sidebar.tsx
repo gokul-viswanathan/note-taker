@@ -1,6 +1,8 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarMenu,
+  SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import FolderTree from "@/components/shadcnSidebar/FolderTree";
@@ -9,20 +11,30 @@ import {
   ContextMenuTrigger,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuSeparator,
 } from "@/components/ui/context-menu";
 import { useStore } from "@/stores/states";
+import { useFileCreation } from "@/hooks/useFileCreation";
+import CreateInputField from "@/components/ui/CreateInputField";
 
 const AppSidebar: React.FC = () => {
+  const isCreateFileOpen = useStore((state) => state.isCreateFileOpen);
+  const isCreateFolderOpen = useStore((state) => state.isCreateFolderOpen);
+  const currentContextMenuItem = useStore((state) => state.contextMenuItem);
+  const creationType = isCreateFileOpen ? "file" : "folder";
+
+  const { inputValue, setInputValue, handleKeyDown, handleCancel } = useFileCreation({
+    creationType,
+    parentPath: "",
+    onSuccess: () => {
+      // Refresh folder tree if needed
+    },
+  });
+
   const handleCreateFolder = () => {
-    console.log("create folder");
-    useStore.getState().setContextMenuItem?.(null);
     useStore.getState().setIsCreateFolderOpen?.(true);
   };
 
   const handleCreateFile = () => {
-    console.log("create file");
-    useStore.getState().setContextMenuItem?.(null);
     useStore.getState().setIsCreateFileOpen?.(true);
   };
 
@@ -32,7 +44,20 @@ const AppSidebar: React.FC = () => {
         <ContextMenu>
           <ContextMenuTrigger asChild>
             <SidebarContent>
-              <FolderTree />
+              <SidebarMenu>
+                <FolderTree />
+                {(isCreateFileOpen || isCreateFolderOpen) && !currentContextMenuItem && (
+                  <SidebarMenuItem>
+                    <CreateInputField
+                      inputValue={inputValue}
+                      setInputValue={setInputValue}
+                      creationType={creationType}
+                      onKeyDown={handleKeyDown}
+                      onCancel={handleCancel}
+                    />
+                  </SidebarMenuItem>
+                )}
+              </SidebarMenu>
             </SidebarContent>
           </ContextMenuTrigger>
           <ContextMenuContent className="w-52">
