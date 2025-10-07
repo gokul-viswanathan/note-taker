@@ -8,7 +8,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Folder, File } from "lucide-react";
+import { Folder, File, ChevronRight } from "lucide-react";
 import { FileItem } from "@/types/git-interface";
 import { useStore } from "@/stores/states";
 import { useFileCreation } from "@/hooks/useFileCreation";
@@ -18,6 +18,7 @@ interface FileTreeProp {
   item: FileItem;
   onToggleFolder: (path: string) => void;
   onFileCreated?: () => void;
+  expandedFolders: Set<string>;
   level?: number;
 }
 
@@ -25,6 +26,7 @@ const FileTreeItem: React.FC<FileTreeProp> = ({
   item,
   onToggleFolder,
   onFileCreated,
+  expandedFolders,
   level = 1,
 }) => {
   const isCreateFileDialogBoxOpen = useStore((state) => state.isCreateFileOpen);
@@ -34,11 +36,12 @@ const FileTreeItem: React.FC<FileTreeProp> = ({
   const creationType = isCreateFileDialogBoxOpen ? "file" : "folder";
   const currentContextMenuItem = useStore((state) => state.contextMenuItem);
 
-  const { inputValue, setInputValue, handleKeyDown, handleCancel } = useFileCreation({
-    creationType,
-    parentPath: currentContextMenuItem?.path || "",
-    onSuccess: onFileCreated,
-  });
+  const { inputValue, setInputValue, handleKeyDown, handleCancel } =
+    useFileCreation({
+      creationType,
+      parentPath: currentContextMenuItem?.path || "",
+      onSuccess: onFileCreated,
+    });
 
   const handleFolderOrFileClick = (item: FileItem) => {
     if (item.type == "dir") {
@@ -71,69 +74,72 @@ const FileTreeItem: React.FC<FileTreeProp> = ({
     return item.children && item.children?.length > 0;
   };
 
-  if (item.type === "file") {
+  // It's a directory
+  if (item.type === "dir") {
     return (
-      <SidebarMenuItem>
-        <SidebarMenuButton
-          onClick={() => handleFolderOrFileClick(item)}
-          onContextMenu={() => {
-            contextMenuUpdate(item);
-          }}
-        >
-          <File className="h-4 w-4" />
-          <span>{item.name}</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
+      <Collapsible open={expandedFolders.has(item.path)}>
+        <SidebarMenuItem>
+          <CollapsibleTrigger asChild>
+            <SidebarMenuButton
+              onClick={() => handleFolderOrFileClick(item)}
+              onContextMenu={() => {
+                contextMenuUpdate(item);
+              }}
+            >
+              <ChevronRight
+                className={`h-4 w-4 transition-transform ${expandedFolders.has(item.path) ? "rotate-90" : ""}`}
+              />
+              <Folder className="h-4 w-4" />
+              <span>{item.name}</span>
+            </SidebarMenuButton>
+          </CollapsibleTrigger>
+
+          {showContextMenuSubItem() && (
+            <CollapsibleContent>
+              <SidebarMenuSub>
+                {/* sidebarmenu item as the input field under the folder. handle root as well */}
+                {showInputBox() && (
+                  <SidebarMenuItem>
+                    <CreateInputField
+                      inputValue={inputValue}
+                      setInputValue={setInputValue}
+                      creationType={creationType}
+                      onKeyDown={handleKeyDown}
+                      onCancel={handleCancel}
+                    />
+                  </SidebarMenuItem>
+                )}
+                {showChildItems() &&
+                  item.children?.map((child) => (
+                    <FileTreeItem
+                      key={child.path}
+                      item={child}
+                      onToggleFolder={onToggleFolder}
+                      onFileCreated={onFileCreated}
+                      expandedFolders={expandedFolders}
+                      level={level + 1}
+                    />
+                  ))}
+              </SidebarMenuSub>
+            </CollapsibleContent>
+          )}
+        </SidebarMenuItem>
+      </Collapsible>
     );
   }
 
-  // It's a directory
   return (
-    <Collapsible open>
-      <SidebarMenuItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton
-            onClick={() => handleFolderOrFileClick(item)}
-            onContextMenu={() => {
-              contextMenuUpdate(item);
-            }}
-          >
-            <Folder className="h-4 w-4" />
-            <span>{item.name}</span>
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
-
-        {showContextMenuSubItem() && (
-          <CollapsibleContent>
-            <SidebarMenuSub>
-              {/* sidebarmenu item as the input field under the folder. handle root as well */}
-              {showInputBox() && (
-                <SidebarMenuItem>
-                  <CreateInputField
-                    inputValue={inputValue}
-                    setInputValue={setInputValue}
-                    creationType={creationType}
-                    onKeyDown={handleKeyDown}
-                    onCancel={handleCancel}
-                  />
-                </SidebarMenuItem>
-              )}
-              {showChildItems() &&
-                item.children?.map((child) => (
-                  <FileTreeItem
-                    key={child.path}
-                    item={child}
-                    onToggleFolder={onToggleFolder}
-                    onFileCreated={onFileCreated}
-                    level={level + 1}
-                  />
-                ))}
-            </SidebarMenuSub>
-          </CollapsibleContent>
-        )}
-      </SidebarMenuItem>
-    </Collapsible>
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        onClick={() => handleFolderOrFileClick(item)}
+        onContextMenu={() => {
+          contextMenuUpdate(item);
+        }}
+      >
+        <File className="h-4 w-4" />
+        <span>{item.name}</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   );
 };
-
 export default FileTreeItem;

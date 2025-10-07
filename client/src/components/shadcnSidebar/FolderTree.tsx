@@ -1,4 +1,3 @@
-
 import { FileItem } from "@/types/git-interface";
 import fetchFiles from "@/services/getFiles";
 import updateFileItemChildren from "@/services/updateFileItemChildren";
@@ -34,6 +33,7 @@ const FolderTree: React.FC = () => {
         );
         setFileStructure(localFileStructure);
       }
+      console.log("file structure array :", fileStructure);
     } catch (error) {
       console.error("Error fetching folder contents:", error);
     }
@@ -72,6 +72,7 @@ const FolderTree: React.FC = () => {
             item={items}
             onToggleFolder={toggleFolder}
             onFileCreated={handleFileCreated}
+            expandedFolders={expandedFolders}
             level={1}
           />
         ))}

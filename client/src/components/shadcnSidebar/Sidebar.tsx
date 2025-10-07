@@ -4,6 +4,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarProvider,
+  SidebarWrapper,
 } from "@/components/ui/sidebar";
 import FolderTree from "@/components/shadcnSidebar/FolderTree";
 import {
@@ -22,13 +23,14 @@ const AppSidebar: React.FC = () => {
   const currentContextMenuItem = useStore((state) => state.contextMenuItem);
   const creationType = isCreateFileOpen ? "file" : "folder";
 
-  const { inputValue, setInputValue, handleKeyDown, handleCancel } = useFileCreation({
-    creationType,
-    parentPath: "",
-    onSuccess: () => {
-      // Refresh folder tree if needed
-    },
-  });
+  const { inputValue, setInputValue, handleKeyDown, handleCancel } =
+    useFileCreation({
+      creationType,
+      parentPath: "",
+      onSuccess: () => {
+        // Refresh folder tree if needed
+      },
+    });
 
   const handleCreateFolder = () => {
     useStore.getState().setIsCreateFolderOpen?.(true);
@@ -40,23 +42,24 @@ const AppSidebar: React.FC = () => {
 
   return (
     <SidebarProvider>
-      <Sidebar side="left">
+      <SidebarWrapper className="relative h-full min-h-auto">
         <ContextMenu>
           <ContextMenuTrigger asChild>
             <SidebarContent>
               <SidebarMenu>
                 <FolderTree />
-                {(isCreateFileOpen || isCreateFolderOpen) && !currentContextMenuItem && (
-                  <SidebarMenuItem>
-                    <CreateInputField
-                      inputValue={inputValue}
-                      setInputValue={setInputValue}
-                      creationType={creationType}
-                      onKeyDown={handleKeyDown}
-                      onCancel={handleCancel}
-                    />
-                  </SidebarMenuItem>
-                )}
+                {(isCreateFileOpen || isCreateFolderOpen) &&
+                  !currentContextMenuItem && (
+                    <SidebarMenuItem>
+                      <CreateInputField
+                        inputValue={inputValue}
+                        setInputValue={setInputValue}
+                        creationType={creationType}
+                        onKeyDown={handleKeyDown}
+                        onCancel={handleCancel}
+                      />
+                    </SidebarMenuItem>
+                  )}
               </SidebarMenu>
             </SidebarContent>
           </ContextMenuTrigger>
@@ -69,7 +72,7 @@ const AppSidebar: React.FC = () => {
             </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
-      </Sidebar>
+      </SidebarWrapper>
     </SidebarProvider>
   );
 };
