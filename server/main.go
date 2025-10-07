@@ -1,13 +1,17 @@
 package main
 
 import (
+	"slices"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gokul-viswanathan/note-taker/server/handlers"
-	"slices"
+	"github.com/joho/godotenv"
 )
 
 // complete the cors setup
 func main() {
+
+	godotenv.Load(".env")
 	router := gin.Default()
 	router.Use(corsMiddleware())
 
