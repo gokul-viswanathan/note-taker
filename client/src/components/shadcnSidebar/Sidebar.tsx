@@ -42,7 +42,7 @@ const AppSidebar: React.FC = () => {
 
   return (
     <SidebarProvider>
-      <SidebarWrapper className="relative h-full min-h-auto">
+      <Sidebar className="relative h-full min-h-auto">
         <ContextMenu>
           <ContextMenuTrigger asChild>
             <SidebarContent>
@@ -72,7 +72,7 @@ const AppSidebar: React.FC = () => {
             </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
-      </SidebarWrapper>
+      </Sidebar>
     </SidebarProvider>
   );
 };
