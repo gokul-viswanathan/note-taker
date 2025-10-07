@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
 type GitHubTokenResponse struct {
@@ -17,8 +18,8 @@ type GitHubTokenResponse struct {
 
 func TokenAuthentication(code string) string {
 
-	clientID := "Ov23liJs7CaOYS4hDOqB"
-	clientSecret := "2d42995c0213613a37d30a5c9220070e3b72a0b6"
+	clientID := os.Getenv("GITHUB_CLIENT_ID")
+	clientSecret := os.Getenv("GITHUB_CLIENT_SECRET")
 
 	url := "https://github.com/login/oauth/access_token"
 	payload := map[string]string{
