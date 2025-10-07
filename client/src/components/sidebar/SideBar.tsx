@@ -11,9 +11,6 @@ const Sidebar: React.FC = () => {
                 aria-label="Sidebar"
             >
                 <div className="h-full px-3 py-4 overflow-y-auto">
-                    <div className="mb-6">
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Thought Ink</h1>
-                    </div>
                     <ContextMenu>
                         <ContextMenuTrigger className="file-explorer">
 

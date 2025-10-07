@@ -51,15 +51,20 @@ const FileExplorer: React.FC = () => {
     }, []);
 
     return (
-
-        < FolderTree
-            items={fileStructure}
-            expandedFolders={expandedFolders}
-            handleContextMenu={handleContextMenu}
-            onToggleFolder={toggleFolder}
-            isRootLevel={true} // Enable root level operations
-        />
-
+        fileStructure && fileStructure.length > 0 ? (
+            <FolderTree
+                items={fileStructure}
+                expandedFolders={expandedFolders}
+                handleContextMenu={handleContextMenu}
+                onToggleFolder={toggleFolder}
+                isRootLevel={true}
+            />
+        ) : (
+            <div className="flex flex-col items-center justify-center h-full p-8 text-center text-gray-500">
+                <p className="text-lg font-medium mb-2">No files or folders yet</p>
+                <p className="text-sm">Right-click to create a new folder or file</p>
+            </div>
+        )
     );
 };
 

@@ -37,28 +37,67 @@ const Editor = forwardRef((props, forwardedRef): React.JSX.Element => {
         };
     }, []);
 
+
     useEffect(() => {
         const loadFileContent = async () => {
-
             if (currentFile && typeof currentFile !== 'string' && 'path' in currentFile) {
-                const data = await fetchFileContent(currentFile.path);
-                if (data && quillRef.current) {
-                    try {
-                        const content = data.content ? JSON.parse(data.content) : [];
-                        quillRef.current.setContents(content);
-                    } catch (error) {
-                        console.error("Failed to parse file content:", error);
-                        quillRef.current.setContents([]);
+                try {
+                    const data = await fetchFileContent(currentFile.path);
+
+                    if (data && quillRef.current) {
+                        // Check if content exists and is not empty
+                        if (!data.content || data.content.trim() === '') {
+                            console.log("File is empty, initializing with blank content");
+                            quillRef.current.setContents([{ insert: '\n' }]);
+                            return;
+                        }
+
+                        try {
+                            // Try to parse the content as JSON
+                            const content = JSON.parse(data.content);
+
+                            // Validate that it's an array (Quill Delta format)
+                            if (Array.isArray(content) && content.length > 0) {
+                                quillRef.current.setContents(content);
+                            } else {
+                                console.warn("Content is not in valid Quill format");
+                                quillRef.current.setContents([{ insert: '\n' }]);
+                            }
+
+                        } catch (parseError) {
+                            console.error("Failed to parse file content:", parseError);
+
+                            // Fallback: try to use as plain text if it's a string
+                            try {
+                                quillRef.current.setText(data.content || '');
+                            } catch {
+                                quillRef.current.setContents([{ insert: '\n' }]);
+                            }
+                        }
+                    } else {
+                        // Handle missing data or quillRef
+                        if (!data) {
+                            console.warn("No data received from fetchFileContent");
+                        }
+                        if (quillRef.current) {
+                            quillRef.current.setContents([{ insert: '\n' }]);
+                        }
+                    }
+                } catch (fetchError) {
+                    console.error("Failed to fetch file content:", fetchError);
+                    if (quillRef.current) {
+                        quillRef.current.setContents([{ insert: '\n' }]);
                     }
                 }
             } else if (quillRef.current) {
-                quillRef.current.setContents([]);
+                // No valid current file, clear the editor
+                quillRef.current.setContents([{ insert: '\n' }]);
             }
         };
+
         loadFileContent();
     }, [currentFile]);
 
-    //another useEffect for quill changes
     useEffect(() => {
         //WARNING: updating content directly to current file will cause too many rerenders
         //TODO: why not call api based on timeout - use debounce and sepeartion on content change and file change
@@ -85,6 +124,10 @@ const Editor = forwardRef((props, forwardedRef): React.JSX.Element => {
                 await updateFileContent(currentFile, useStore.getState().currentFileContent)
             }
             saveContent()
+        }
+
+        return () => {
+            setSaveFile?.(false)
         }
 
     }, [saveFile]);

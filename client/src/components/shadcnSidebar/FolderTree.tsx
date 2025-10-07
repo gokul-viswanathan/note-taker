@@ -1,0 +1,85 @@
+import { FileItem } from "@/types/git-interface";
+import fetchFiles from "@/services/getFiles";
+import updateFileItemChildren from "@/services/updateFileItemChildren";
+import { useState, useEffect } from "react";
+import FileTreeItem from "@/components/shadcnSidebar/FileTreeItem";
+import { ContextMenu } from "@/components/ui/context-menu";
+import { ContextMenuTrigger } from "@radix-ui/react-context-menu";
+import ContextMenuDemo from "@/components/sidebar/CustomContextMenu2";
+
+interface FolderTree {
+  fileStructure: FileItem[];
+  expandedFolder: Set<string>;
+  onToggleFolder: (path: string) => void;
+}
+
+const FolderTree: React.FC = () => {
+  const [fileStructure, setFileStructure] = useState<FileItem[]>([]);
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
+    new Set(),
+  );
+
+  const fetchFolderContents = async (folderPath: string) => {
+    try {
+      const currentPathData = await fetchFiles(folderPath);
+      if (folderPath == "") {
+        setFileStructure(currentPathData);
+      } else {
+        let localFileStructure = fileStructure;
+        localFileStructure = updateFileItemChildren(
+          localFileStructure,
+          folderPath,
+          currentPathData,
+        );
+        setFileStructure(localFileStructure);
+      }
+      console.log("file structure array :", fileStructure);
+    } catch (error) {
+      console.error("Error fetching folder contents:", error);
+    }
+  };
+
+  const toggleFolder = async (folderPath: string) => {
+    const localExpandedFolders = new Set(expandedFolders);
+
+    if (expandedFolders.has(folderPath)) {
+      localExpandedFolders.delete(folderPath);
+    } else {
+      localExpandedFolders.add(folderPath);
+      try {
+        await fetchFolderContents(folderPath);
+      } catch (error) {
+        console.error("Error loading sub-folder contents:", error);
+      }
+    }
+    setExpandedFolders(localExpandedFolders);
+  };
+
+  useEffect(() => {
+    fetchFolderContents("");
+  }, []);
+
+  const handleFileCreated = () => {
+    fetchFolderContents("");
+  };
+
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger>
+        {fileStructure.map((items) => (
+          <FileTreeItem
+            key={items.path}
+            item={items}
+            onToggleFolder={toggleFolder}
+            onFileCreated={handleFileCreated}
+            expandedFolders={expandedFolders}
+            level={1}
+          />
+        ))}
+      </ContextMenuTrigger>
+      <ContextMenuDemo />
+    </ContextMenu>
+  );
+};
+
+export default FolderTree;
