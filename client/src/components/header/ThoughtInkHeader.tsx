@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
-import { Sun, Moon, HamburgerIcon } from "lucide-react";
+import { Sun, Moon, Menu } from "lucide-react";
+import { useSidebar } from "../ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 interface ThoughtInkHeaderProps {
   currentFile?: string;
   darkMode: boolean;
@@ -26,15 +28,21 @@ const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
     return `${folder}/${file}`;
   };
 
+  const isMobile = useIsMobile();
+
   return (
     <div className="flex items-center justify-between px-4 py-2 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
       {/* Left Section */}
       <div className="flex items-center space-x-4">
-        <HamburgerIcon
+        <Menu
           onClick={onToggleFileSidebar}
-          className="px-3 py-1 bg-blue-500 text-white rounded"
+          className="p-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
         />
-        <div className="text-lg font-semibold">ThoughtInk</div>
+        {isMobile ? (
+          <div className="text-lg font-semibold">T I</div>
+        ) : (
+          <div className="text-lg font-semibold">Thought Ink</div>
+        )}
       </div>
 
       {/* Center Section */}

@@ -22,14 +22,19 @@ const FolderTree: React.FC = () => {
   const fetchFolderContents = async (folderPath: string) => {
     try {
       const currentPathData = await fetchFiles(folderPath);
+      const sortedData = currentPathData.sort((a: FileItem, b: FileItem) => {
+        if (a.type === "dir" && b.type !== "dir") return -1;
+        if (a.type !== "dir" && b.type === "dir") return 1;
+        return a.name.localeCompare(b.name);
+      });
       if (folderPath == "") {
-        setFileStructure(currentPathData);
+        setFileStructure(sortedData);
       } else {
         let localFileStructure = fileStructure;
         localFileStructure = updateFileItemChildren(
           localFileStructure,
           folderPath,
-          currentPathData,
+          sortedData,
         );
         setFileStructure(localFileStructure);
       }
