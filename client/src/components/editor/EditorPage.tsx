@@ -1,12 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useStore } from "@/stores/states";
 import AppSideBar from "@/components/shadcnSidebar/Sidebar";
 import ThoughtInkHeader from "@/components/header/ThoughtInkHeader";
 import { FileItem } from "@/types/git-interface";
 import { useTheme } from "@/components/theme/ThemeProvider";
-import { on } from "events";
+import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 
 const QuillEditor = dynamic(() => import("@/components/NewQuillEditor"), {
   ssr: false,
@@ -15,8 +15,8 @@ const QuillEditor = dynamic(() => import("@/components/NewQuillEditor"), {
 
 const MainComponent = () => {
   const currentFile = useStore((state) => state.currentFile);
-  const [isShowSidebar, setIsShowSidebar] = useState(false);
   const { darkMode, toggleTheme } = useTheme();
+  const { toggleSidebar, openMobile } = useSidebar();
 
   useEffect(() => {
     const savedFile = localStorage.getItem("currentFile");
@@ -43,12 +43,8 @@ const MainComponent = () => {
     useStore.getState().setSaveFile?.(true);
   }
 
-  function onToggleFileSidebar() {
-    setIsShowSidebar((isShowSidebar) => !isShowSidebar);
-  }
-
   return (
-    <div className="h-screen flex flex-col">
+    <div className="notepad-page h-screen w-full flex flex-col ">
       <ThoughtInkHeader
         currentFile={
           typeof currentFile === "string" ? currentFile : currentFile?.path
@@ -56,11 +52,13 @@ const MainComponent = () => {
         darkMode={darkMode}
         onToggleTheme={() => toggleTheme()}
         onPushToRepo={handlePushToRepo}
-        onToggleFileSidebar={onToggleFileSidebar}
+        onToggleFileSidebar={toggleSidebar}
       />
       <div className="flex flex-1 overflow-hidden">
-        {isShowSidebar && <AppSideBar />}
-        <div className="flex-1 overflow-hidden">
+        <AppSideBar />
+        <div
+          className={`editor flex-1 overflow-hidden ${openMobile ? "pointer-events-none opacity-50" : ""}`}
+        >
           <QuillEditor />
         </div>
       </div>

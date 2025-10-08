@@ -4,7 +4,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarWrapper,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import FolderTree from "@/components/shadcnSidebar/FolderTree";
 import {
@@ -40,40 +40,45 @@ const AppSidebar: React.FC = () => {
     useStore.getState().setIsCreateFileOpen?.(true);
   };
 
+  const { open } = useSidebar();
+
   return (
-    <SidebarProvider>
-      <Sidebar className="relative h-full min-h-auto">
-        <ContextMenu>
-          <ContextMenuTrigger asChild>
-            <SidebarContent>
-              <SidebarMenu>
-                <FolderTree />
-                {(isCreateFileOpen || isCreateFolderOpen) &&
-                  !currentContextMenuItem && (
-                    <SidebarMenuItem>
-                      <CreateInputField
-                        inputValue={inputValue}
-                        setInputValue={setInputValue}
-                        creationType={creationType}
-                        onKeyDown={handleKeyDown}
-                        onCancel={handleCancel}
-                      />
-                    </SidebarMenuItem>
-                  )}
-              </SidebarMenu>
-            </SidebarContent>
-          </ContextMenuTrigger>
-          <ContextMenuContent className="w-52">
-            <ContextMenuItem inset onClick={handleCreateFolder}>
-              Create New Folder
-            </ContextMenuItem>
-            <ContextMenuItem inset onClick={handleCreateFile}>
-              Create New File
-            </ContextMenuItem>
-          </ContextMenuContent>
-        </ContextMenu>
-      </Sidebar>
-    </SidebarProvider>
+    <Sidebar
+      className="relative h-full"
+      style={
+        { "--sidebar-width": open ? "16rem" : "0rem" } as React.CSSProperties
+      }
+    >
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <SidebarContent>
+            <SidebarMenu>
+              <FolderTree />
+              {(isCreateFileOpen || isCreateFolderOpen) &&
+                !currentContextMenuItem && (
+                  <SidebarMenuItem>
+                    <CreateInputField
+                      inputValue={inputValue}
+                      setInputValue={setInputValue}
+                      creationType={creationType}
+                      onKeyDown={handleKeyDown}
+                      onCancel={handleCancel}
+                    />
+                  </SidebarMenuItem>
+                )}
+            </SidebarMenu>
+          </SidebarContent>
+        </ContextMenuTrigger>
+        <ContextMenuContent className="w-52">
+          <ContextMenuItem inset onClick={handleCreateFolder}>
+            Create New Folder
+          </ContextMenuItem>
+          <ContextMenuItem inset onClick={handleCreateFile}>
+            Create New File
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    </Sidebar>
   );
 };
 
