@@ -3,7 +3,6 @@ import {
   SidebarContent,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarProvider,
   useSidebar,
 } from "@/components/ui/sidebar";
 import FolderTree from "@/components/shadcnSidebar/FolderTree";
