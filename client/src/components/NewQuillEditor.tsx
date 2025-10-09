@@ -1,29 +1,14 @@
 "use client";
-import React, {
-  forwardRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import Quill from "quill";
 import { Op } from "quill-delta";
-const Delta = Quill.import("delta");
 import "quill/dist/quill.snow.css"; // Import Quill's default snow theme
 import toolbarOptions from "@/services/quillToolBar";
 import { useStore } from "@/stores/states";
 import fetchFileContent from "@/services/getFileContent";
 import updateFileContent from "@/services/updateFileContent";
-/*
- * TODO:
- * 1. data should be visibile - of current file -> working
- * 2. data should be saved on text-change as object or local localStorage - working
- * 3. api call to get the data on currentfile change - working
- * 4. chnaging the file or closing the file should make the post request to save the data - not implemented
- * 5. multiple editor instance should be handled - completed
- * */
 
-const Editor = forwardRef((props, forwardedRef): React.JSX.Element => {
+const Editor = forwardRef((_props, _forwardedRef): React.JSX.Element => {
   const containerRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<Quill | null>(null);
   const currentFile = useStore((state) => state.currentFile);
