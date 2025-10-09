@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { Sun, Moon, Menu } from "lucide-react";
-import { useSidebar } from "../ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 interface ThoughtInkHeaderProps {
   currentFile?: string;

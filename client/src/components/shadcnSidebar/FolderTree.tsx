@@ -60,6 +60,7 @@ const FolderTree: React.FC = () => {
     setExpandedFolders(localExpandedFolders);
   };
 
+  //eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchFolderContents("");
   }, []);
