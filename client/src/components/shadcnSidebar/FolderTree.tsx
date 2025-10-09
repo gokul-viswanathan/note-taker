@@ -1,7 +1,7 @@
 import { FileItem } from "@/types/git-interface";
 import fetchFiles from "@/services/getFiles";
 import updateFileItemChildren from "@/services/updateFileItemChildren";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import FileTreeItem from "@/components/shadcnSidebar/FileTreeItem";
 import { ContextMenu } from "@/components/ui/context-menu";
 import { ContextMenuTrigger } from "@radix-ui/react-context-menu";
@@ -19,7 +19,7 @@ const FolderTree: React.FC = () => {
     new Set(),
   );
 
-  const fetchFolderContents = async (folderPath: string) => {
+  const fetchFolderContents = useCallback(async (folderPath: string) => {
     try {
       const currentPathData = await fetchFiles(folderPath);
       const sortedData = currentPathData.sort((a: FileItem, b: FileItem) => {
@@ -27,43 +27,45 @@ const FolderTree: React.FC = () => {
         if (a.type !== "dir" && b.type === "dir") return 1;
         return a.name.localeCompare(b.name);
       });
-      if (folderPath == "") {
+
+      if (folderPath === "") {
         setFileStructure(sortedData);
       } else {
-        let localFileStructure = fileStructure;
-        localFileStructure = updateFileItemChildren(
-          localFileStructure,
-          folderPath,
-          sortedData,
+        // use functional setState to avoid stale closure
+        setFileStructure((prev) =>
+          updateFileItemChildren(prev, folderPath, sortedData),
         );
-        setFileStructure(localFileStructure);
       }
-      console.log("file structure array :", fileStructure);
+
+      console.log("file structure array:", fileStructure);
     } catch (error) {
       console.error("Error fetching folder contents:", error);
     }
-  };
+  }, []);
 
-  const toggleFolder = async (folderPath: string) => {
-    const localExpandedFolders = new Set(expandedFolders);
+  const toggleFolder = useCallback(
+    async (folderPath: string) => {
+      const localExpandedFolders = new Set(expandedFolders);
 
-    if (expandedFolders.has(folderPath)) {
-      localExpandedFolders.delete(folderPath);
-    } else {
-      localExpandedFolders.add(folderPath);
-      try {
-        await fetchFolderContents(folderPath);
-      } catch (error) {
-        console.error("Error loading sub-folder contents:", error);
+      if (expandedFolders.has(folderPath)) {
+        localExpandedFolders.delete(folderPath);
+      } else {
+        localExpandedFolders.add(folderPath);
+        try {
+          await fetchFolderContents(folderPath);
+        } catch (error) {
+          console.error("Error loading sub-folder contents:", error);
+        }
       }
-    }
-    setExpandedFolders(localExpandedFolders);
-  };
 
-  //eslint-disable-next-line react-hooks/exhaustive-deps
+      setExpandedFolders(localExpandedFolders);
+    },
+    [expandedFolders, fetchFolderContents],
+  );
+
   useEffect(() => {
     fetchFolderContents("");
-  }, []);
+  }, [fetchFolderContents]);
 
   const handleFileCreated = () => {
     fetchFolderContents("");
