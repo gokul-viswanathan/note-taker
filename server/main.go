@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"slices"
 
 	"github.com/gin-gonic/gin"
@@ -11,9 +12,14 @@ import (
 // complete the cors setup
 func main() {
 
-	godotenv.Load(".env")
+	_ = godotenv.Load()
 	router := gin.Default()
 	router.Use(corsMiddleware())
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Fallback value
+	}
 
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "Thought Ink server is running"})
@@ -27,7 +33,7 @@ func main() {
 	router.DELETE("/api/v1/deleteFile", handlers.DeleteFile)
 	router.DELETE("/api/v1/deleteFolder", handlers.DeleteFolder)
 
-	router.Run("localhost:8080")
+	router.Run(":" + port)
 }
 
 // CORS middleware function definition
