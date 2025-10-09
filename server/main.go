@@ -42,7 +42,7 @@ func corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		allowedOrigins := []string{
 			"http://localhost:3000",
-			"https://note-taker-seven-ashen.vercel.app/",
+			"https://note-taker-seven-ashen.vercel.app",
 		}
 
 		origin := c.GetHeader("Origin")
