@@ -15,7 +15,6 @@ const updateFileContent = async (
   const { username, repo, token } = githubConfig;
   const subpath = currentFile.path.split("/").map(encodeURIComponent).join("/");
   const url = `${baseURL}/v1/filecontent?username=${username}&repo=${repo}&path=${subpath}`;
-  console.log("Updateing file content to URL:", url);
 
   const requestBody = {
     content: content,

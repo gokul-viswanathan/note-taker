@@ -36,8 +36,6 @@ const FolderTree: React.FC = () => {
           updateFileItemChildren(prev, folderPath, sortedData),
         );
       }
-
-      console.log("file structure array:", fileStructure);
     } catch (error) {
       console.error("Error fetching folder contents:", error);
     }

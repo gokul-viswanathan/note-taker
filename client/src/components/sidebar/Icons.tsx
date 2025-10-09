@@ -9,13 +9,13 @@ const FolderIcon = ({ isOpen }: { isOpen?: boolean }) =>
   );
 
 // FileIcon: Returns a generic File icon (customizable based on fileName if needed)
-const FileIcon = ({ fileName }: { fileName: string }) => {
-  const getFileIcon = (_name: string) => {
+const FileIcon = () => {
+  const getFileIcon = () => {
     // You can extend this logic to return different Lucide icons based on fileName
     // For example, FileText for .txt, FileCode for .js/.ts, etc.
     return <File className="w-4 h-4 mr-2 text-gray-400" color="currentColor" />;
   };
-  return getFileIcon(fileName);
+  return getFileIcon();
 };
 
 // ChevronIcon: Rotates based on isOpen prop
