@@ -37,8 +37,6 @@ const updateFileContent = async (
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
-    console.log(`File ${currentFile.path} updated successfully.`);
   } catch (error) {
     console.error("Failed to fetch files:", error);
   }
