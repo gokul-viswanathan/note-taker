@@ -15,6 +15,9 @@ func main() {
 	router := gin.Default()
 	router.Use(corsMiddleware())
 
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "Thought Ink server is running"})
+	})
 	router.GET("/api/v1/airesponse", handlers.PromptHandler)
 	router.GET("/api/v1/files", handlers.GetFiles)
 	router.GET("/api/v1/filecontent", handlers.GetFileContent)
@@ -32,9 +35,6 @@ func corsMiddleware() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		allowedOrigins := []string{
-			"https://example.com",
-			"https://test.com",
-			"http://192.168.1.44:3000",
 			"http://localhost:3000",
 		}
 

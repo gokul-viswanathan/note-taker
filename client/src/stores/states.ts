@@ -1,11 +1,12 @@
 import { create } from "zustand";
 import { FileItem } from "@/types/git-interface";
+import { Op } from "quill-delta";
 
 interface BearState {
   currentFile?: FileItem | string;
   setCurrentFile?: (file: FileItem) => void;
-  currentFileContent?: any;
-  setCurrentFileContent?: (content: any) => void;
+  currentFileContent?: Op[] | null;
+  setCurrentFileContent?: (content: Op[] | null) => void;
   saveFile?: boolean;
   setSaveFile?: (save: boolean) => void;
   isCreateFolderOpen?: boolean;
@@ -26,7 +27,8 @@ export const useStore = create<BearState>((set) => ({
   setCurrentFile: (file: FileItem) => set({ currentFile: file }),
   //current file content state
   currentFileContent: null,
-  setCurrentFileContent: (content: any) => set({ currentFileContent: content }),
+  setCurrentFileContent: (content: Op[] | null) =>
+    set({ currentFileContent: content }),
   //save file state
   saveFile: false,
   setSaveFile: (value?: boolean) =>

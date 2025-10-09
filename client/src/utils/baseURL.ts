@@ -1,10 +1,8 @@
 const getBaseUrl = (): string => {
-    if (process.env.NEXT_PUBLIC_ENV_NAME === 'development') {
-        const url: string = process.env.NEXT_PUBLIC_API_URL || ""; // or whichever port your dev server runs on
-        return url;
-    } else {
-        return 'https://your-production-server.com'; // replace with your prod URL
-    }
+  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 };
 
+export const callBackUrl = (): string => {
+  return process.env.NEXT_PUBLIC_CALLBACK_URL || "http://localhost:3000";
+};
 export default getBaseUrl;
