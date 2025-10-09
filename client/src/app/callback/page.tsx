@@ -28,12 +28,6 @@ const Callback = () => {
     const code = params.get("code");
     const error = params.get("error");
 
-    console.log(
-      "Step 2: callback function called with temp code and error",
-      code,
-      error,
-    );
-
     if (error) {
       setStatus(`Authorization failed: ${error.replace("_", " ")}`);
       setStatusType("error");
@@ -65,8 +59,6 @@ const Callback = () => {
           const data = response.data;
           // Store the actual response data instead of res.body
           localStorage.setItem("user_github_data", data);
-          console.log("the github Authentication data is ", data);
-          // Show success message briefly before redirect
           setTimeout(() => {
             setStatus("Redirecting to your notepad...");
             setTimeout(() => {

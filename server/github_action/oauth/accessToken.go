@@ -20,6 +20,7 @@ func TokenAuthentication(code string) string {
 
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	clientSecret := os.Getenv("GITHUB_CLIENT_SECRET")
+	fmt.Printf("the client: %s and toke %s", clientID, clientSecret)
 
 	url := "https://github.com/login/oauth/access_token"
 	payload := map[string]string{

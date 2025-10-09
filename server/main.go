@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"slices"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gokul-viswanathan/note-taker/server/handlers"
@@ -40,9 +41,13 @@ func main() {
 func corsMiddleware() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		allowedOrigins := []string{
-			"http://localhost:3000",
-			"https://note-taker-seven-ashen.vercel.app",
+		origins := os.Getenv("ALLOWED_ORIGINS")
+
+		allowedOrigins := strings.Split(origins, ",")
+
+		// Trim whitespace from each origin
+		for i := range allowedOrigins {
+			allowedOrigins[i] = strings.TrimSpace(allowedOrigins[i])
 		}
 
 		origin := c.GetHeader("Origin")

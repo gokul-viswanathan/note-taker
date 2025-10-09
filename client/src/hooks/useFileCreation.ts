@@ -10,12 +10,15 @@ interface UseFileCreationProps {
   onSuccess?: () => void;
 }
 
-export const useFileCreation = ({ creationType, parentPath, onSuccess }: UseFileCreationProps) => {
+export const useFileCreation = ({
+  creationType,
+  parentPath,
+  onSuccess,
+}: UseFileCreationProps) => {
   const [inputValue, setInputValue] = useState("");
 
   const handleCreateFolder = async () => {
     const pathOfNewFolder = parentPath + "/" + inputValue + "/";
-    console.log("path to creating new folder ", pathOfNewFolder);
     try {
       await createNewFolder(pathOfNewFolder);
       handleCancel();
@@ -27,7 +30,6 @@ export const useFileCreation = ({ creationType, parentPath, onSuccess }: UseFile
 
   const handleCreateFile = async () => {
     const pathOfNewFile = parentPath + "/" + inputValue;
-    console.log("path to creating new file ", pathOfNewFile);
     try {
       const newFile: FileItem = {
         name: inputValue,
@@ -78,3 +80,4 @@ export const useFileCreation = ({ creationType, parentPath, onSuccess }: UseFile
     handleSave,
   };
 };
+

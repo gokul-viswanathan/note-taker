@@ -6,26 +6,21 @@ import {
 } from "@/components/ui/context-menu";
 import { deleteFileOrFolder } from "@/services/deleteFileOrFolder";
 import { useStore } from "@/stores/states";
-import { useEffect } from "react";
 
 const ContextMenuDemo: React.FC = () => {
   const contextMenuItem = useStore((state) => state.contextMenuItem);
 
   const handleCreateFolder = () => {
-    console.log("Create new folder clicked", contextMenuItem);
     useStore.getState().setIsCreateFolderOpen?.(true);
   };
 
   const handleCreateFile = () => {
-    console.log("Create new file clicked", contextMenuItem);
     useStore.getState().setIsCreateFileOpen?.(true);
   };
 
   const handleDelete = async () => {
-    console.log("Delete clicked", contextMenuItem);
     if (contextMenuItem) {
       try {
-        console.log("the context menu item is ", contextMenuItem);
         await deleteFileOrFolder(contextMenuItem);
         // setIsDeleteDialogOpen?.(false);
       } catch (error) {
@@ -33,10 +28,6 @@ const ContextMenuDemo: React.FC = () => {
       }
     }
   };
-
-  useEffect(() => {
-    console.log("context menu item in state ", contextMenuItem);
-  }, [contextMenuItem]);
 
   if (contextMenuItem?.type == "file") {
     return (

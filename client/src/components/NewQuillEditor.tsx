@@ -45,7 +45,6 @@ const Editor = forwardRef((_props, _forwardedRef): React.JSX.Element => {
           if (data && quillRef.current) {
             // Check if content exists and is not empty
             if (!data.content || data.content.trim() === "") {
-              console.log("File is empty, initializing with blank content");
               quillRef.current.setContents([{ insert: "\n" }]);
               return;
             }
@@ -137,13 +136,6 @@ const Editor = forwardRef((_props, _forwardedRef): React.JSX.Element => {
       setSaveFile?.(false);
     };
   }, [saveFile]);
-
-  useEffect(() => {
-    console.log(
-      "Content updated in zustand:",
-      useStore.getState().currentFileContent,
-    );
-  }, [fileContent]);
 
   return <div ref={containerRef}></div>;
 });
