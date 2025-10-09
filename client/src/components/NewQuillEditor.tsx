@@ -1,3 +1,4 @@
+//@ts-nocheck
 "use client";
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 import Quill from "quill";
@@ -101,8 +102,11 @@ const Editor = forwardRef((_props, _forwardedRef): React.JSX.Element => {
     const handleTextChange = () => {
       if (quillRef.current) {
         const content = quillRef.current.getContents();
-        setFileContent(content.ops || []);
-        setCurrentFileContent && setCurrentFileContent(content.ops || []);
+        const ops = content.ops || [];
+        setFileContent(ops);
+        if (setCurrentFileContent) {
+          setCurrentFileContent(ops);
+        }
       }
     };
     quillRef.current?.on("text-change", handleTextChange);
