@@ -6,6 +6,8 @@ import FileTreeItem from "@/components/shadcnSidebar/FileTreeItem";
 import { ContextMenu } from "@/components/ui/context-menu";
 import { ContextMenuTrigger } from "@radix-ui/react-context-menu";
 import ContextMenuDemo from "@/components/sidebar/CustomContextMenu2";
+import { useStore } from "@/stores/states";
+import { FolderOpen } from "lucide-react";
 
 interface FolderTree {
   fileStructure: FileItem[];
@@ -18,6 +20,8 @@ const FolderTree: React.FC = () => {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
     new Set(),
   );
+  const isCreateFileOpen = useStore((state) => state.isCreateFileOpen);
+  const isCreateFolderOpen = useStore((state) => state.isCreateFolderOpen);
 
   const fetchFolderContents = useCallback(async (folderPath: string) => {
     try {
@@ -82,6 +86,23 @@ const FolderTree: React.FC = () => {
             level={1}
           />
         ))}
+        {fileStructure.length === 0 &&
+          !isCreateFileOpen &&
+          !isCreateFolderOpen && (
+            <div className="flex flex-col items-center justify-center p-8 text-center space-y-3">
+              <div className="rounded-full bg-muted p-3">
+                <FolderOpen className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-foreground">
+                  No files yet
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Right-click to create a new file or folder
+                </p>
+              </div>
+            </div>
+          )}
       </ContextMenuTrigger>
       <ContextMenuDemo />
     </ContextMenu>

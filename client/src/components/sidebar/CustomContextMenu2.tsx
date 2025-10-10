@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/context-menu";
 import { deleteFileOrFolder } from "@/services/deleteFileOrFolder";
 import { useStore } from "@/stores/states";
+import { useEffect } from "react";
 
 const ContextMenuDemo: React.FC = () => {
   const contextMenuItem = useStore((state) => state.contextMenuItem);
@@ -28,6 +29,10 @@ const ContextMenuDemo: React.FC = () => {
       }
     }
   };
+
+  useEffect(() => {
+    console.log("conext menu value ", contextMenuItem);
+  }, [contextMenuItem]);
 
   if (contextMenuItem?.type == "file") {
     return (
