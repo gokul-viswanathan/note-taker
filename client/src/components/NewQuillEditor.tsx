@@ -124,17 +124,20 @@ const Editor = forwardRef((_props, _forwardedRef): React.JSX.Element => {
       "path" in currentFile
     ) {
       const saveContent = async () => {
-        await updateFileContent(
-          currentFile,
-          useStore.getState().currentFileContent as Op[],
-        );
+        try {
+          await updateFileContent(
+            currentFile,
+            useStore.getState().currentFileContent as Op[],
+          );
+        } catch (error) {
+          console.error("Failed to save file:", error);
+        } finally {
+          // Reset the save flag after the operation completes
+          setSaveFile?.(false);
+        }
       };
       saveContent();
     }
-
-    return () => {
-      setSaveFile?.(false);
-    };
   }, [saveFile]);
 
   return <div ref={containerRef}></div>;
