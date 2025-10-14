@@ -6,7 +6,7 @@ import AppSideBar from "@/components/shadcnSidebar/Sidebar";
 import ThoughtInkHeader from "@/components/header/ThoughtInkHeader";
 import { FileItem } from "@/types/git-interface";
 import { useTheme } from "@/components/theme/ThemeProvider";
-import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/sidebar";
 import AiSideBar from "@/components/aiSideBar";
 
 const QuillEditor = dynamic(() => import("@/components/NewQuillEditor"), {
@@ -64,9 +64,7 @@ const MainComponent = () => {
         >
           <QuillEditor />
         </div>
-        <SidebarProvider>
-          <AiSideBar sidebarState={aiSidebarOpen} />
-        </SidebarProvider>
+        <AiSideBar open={aiSidebarOpen} onOpenChange={setAiSidebarOpen} />
       </div>
     </div>
   );

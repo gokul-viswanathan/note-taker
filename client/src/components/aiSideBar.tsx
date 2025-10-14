@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { apiCall } from "@/services/AiModel";
 import { useStore } from "@/stores/states";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  useSidebar,
-} from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Loader, User, Bot } from "lucide-react";
+import { Send, Loader, User, Bot, X } from "lucide-react";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
 interface Message {
   id: number;
@@ -18,14 +20,11 @@ interface Message {
 }
 
 interface AiSideBarProps {
-  sidebarState: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
-const AiSideBar: React.FC<AiSideBarProps> = ({ sidebarState }) => {
-  //get AI chat history based on this file
-  //if nothing is there set the below mwssage
-  //it should take effect every time the file changes
 
-  const { open, setOpen } = useSidebar();
+const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
   const currentFile = useStore((state) => state.currentFile);
   const currentFilePath =
     typeof currentFile === "string"
@@ -34,10 +33,7 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ sidebarState }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    setOpen(sidebarState);
-  }, [sidebarState]);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const currentAIPrevChat = localStorage.getItem("chatAi" + currentFilePath);
@@ -99,77 +95,128 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ sidebarState }) => {
     setInput("");
   }
 
-  return (
-    <Sidebar
-      className="relative h-full"
-      style={
-        { "--sidebar-width": open ? "20rem" : "0rem" } as React.CSSProperties
-      }
-    >
-      <SidebarContent className="flex flex-col h-full p-4">
-        <SidebarHeader className="pb-4">
-          <h2 className="text-lg font-semibold">AI Chat</h2>
-        </SidebarHeader>
-        <div className="flex-1 overflow-y-auto space-y-4 flex flex-col">
+  const ChatContent = () => (
+    <>
+      <ScrollArea className="flex-1 pr-4">
+        <div className="space-y-4 py-4">
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex items-start space-x-2 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex items-start gap-3 ${
+                msg.sender === "user" ? "flex-row-reverse" : "flex-row"
+              }`}
             >
-              {msg.sender === "bot" && (
-                <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-primary-foreground" />
-                </div>
-              )}
               <div
-                className={`p-3 rounded-lg max-w-xs break-words ${
-                  msg.sender === "user"
-                    ? "bg-primary text-primary-foreground self-end"
-                    : "bg-muted text-muted-foreground self-start"
+                className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                  msg.sender === "bot" ? "bg-primary" : "bg-secondary"
                 }`}
               >
-                {msg.text}
-              </div>
-              {msg.sender === "user" && (
-                <div className="flex-shrink-0 w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
+                {msg.sender === "bot" ? (
+                  <Bot className="w-4 h-4 text-primary-foreground" />
+                ) : (
                   <User className="w-4 h-4 text-secondary-foreground" />
-                </div>
-              )}
+                )}
+              </div>
+              <div
+                className={`p-3 rounded-lg max-w-[70%] break-words ${
+                  msg.sender === "user"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-foreground"
+                }`}
+              >
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                  {msg.text}
+                </p>
+              </div>
             </div>
           ))}
           {isLoading && (
-            <div className="flex items-start space-x-2 justify-start">
+            <div className="flex items-start gap-3">
               <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                 <Bot className="w-4 h-4 text-primary-foreground" />
               </div>
-              <div className="p-3 rounded-lg bg-muted text-muted-foreground flex items-center space-x-2">
+              <div className="p-3 rounded-lg bg-muted flex items-center gap-2">
                 <Loader className="animate-spin w-4 h-4" />
-                <span>AI is thinking...</span>
+                <span className="text-sm">AI is thinking...</span>
               </div>
             </div>
           )}
+          {/*<div ref={messagesEndRef} /> */}
         </div>
+      </ScrollArea>
 
-        {/* Input Field */}
-        <div className="mt-4 flex space-x-2">
+      <div className="pt-4 border-t">
+        <div className="flex gap-2">
           <Input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={isLoading}
-            onKeyDown={(e) => e.key === "Enter" && handleAsk()}
+            className="flex-1"
           />
           <Button
             onClick={handleAsk}
             disabled={isLoading || !input.trim()}
-            className="flex items-center"
+            size="icon"
           >
             <Send className="w-4 h-4" />
           </Button>
         </div>
-      </SidebarContent>
-    </Sidebar>
+        {messages.length > 1 && (
+          <Button variant="ghost" size="sm" className="mt-2 w-full text-xs">
+            Clear Chat
+          </Button>
+        )}
+      </div>
+    </>
+  );
+
+  // Mobile: Use Sheet
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="right" className="w-full sm:w-96 p-0">
+          <div className="flex flex-col h-full p-6">
+            <SheetHeader className="pb-4">
+              <SheetTitle>AI Assistant</SheetTitle>
+            </SheetHeader>
+            <ChatContent />
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // Desktop: Use custom sidebar
+  return (
+    <aside
+      className={`
+        border-l bg-background transition-all duration-300 ease-in-out
+        ${open ? "w-80" : "w-0"}
+        overflow-hidden flex-shrink-0
+      `}
+    >
+      <div
+        className={`
+          w-80 h-full flex flex-col p-6
+          ${!open ? "invisible" : "visible"}
+        `}
+      >
+        <div className="flex items-center justify-between pb-4 border-b">
+          <h2 className="text-lg font-semibold">AI Assistant</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onOpenChange(false)}
+            className="h-8 w-8"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+        <ChatContent />
+      </div>
+    </aside>
   );
 };
 
