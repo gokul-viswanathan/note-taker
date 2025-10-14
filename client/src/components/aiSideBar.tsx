@@ -12,6 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { stringify } from "querystring";
 
 interface Message {
   id: number;
@@ -36,6 +37,7 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
+    //get data from github
     const currentAIPrevChat = localStorage.getItem("chatAi" + currentFilePath);
     if (currentAIPrevChat && currentAIPrevChat !== "") {
       try {
@@ -59,7 +61,9 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
     const userMessage = { id: Date.now(), text: input, sender: "user" };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setIsLoading(true);
-    const currentFileValues = localStorage.getItem(currentFilePath);
+    console.log("the backend ai call");
+    //get new data from state vatiables
+    const currentFileValues = stringify(useStore.getState().currentFileContent);
     if (currentFileValues) {
       apiCall(currentFileValues, input)
         .then((aiOutput) => {
@@ -141,7 +145,6 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
               </div>
             </div>
           )}
-          {/*<div ref={messagesEndRef} /> */}
         </div>
       </ScrollArea>
 
@@ -193,7 +196,7 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
     <aside
       className={`
         border-l bg-background transition-all duration-300 ease-in-out
-        ${open ? "w-80" : "w-0"}
+        ${open ? "w-100" : "w-0"}
         overflow-hidden flex-shrink-0
       `}
     >
