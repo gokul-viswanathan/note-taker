@@ -12,7 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { stringify } from "querystring";
+import { Delta } from "quill";
 
 interface Message {
   id: number;
@@ -26,7 +26,9 @@ interface AiSideBarProps {
 }
 
 const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
+  console.log("components aiSideBar called");
   const currentFile = useStore((state) => state.currentFile);
+
   const currentFilePath =
     typeof currentFile === "string"
       ? currentFile
@@ -63,9 +65,21 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
     setIsLoading(true);
     console.log("the backend ai call");
     //get new data from state vatiables
-    const currentFileValues = stringify(useStore.getState().currentFileContent);
+
+    const currentFileValues = useStore.getState().currentFileContent;
+
+    let plainText = "";
     if (currentFileValues) {
-      apiCall(currentFileValues, input)
+      const delta = new Delta(currentFileValues);
+      plainText = delta.reduce(
+        (text, op) =>
+          text + (op.insert && typeof op.insert === "string" ? op.insert : ""),
+        "",
+      );
+    }
+
+    if (plainText) {
+      apiCall(plainText, input)
         .then((aiOutput) => {
           if (aiOutput !== null) {
             setMessages((prevMessages) => {
@@ -151,11 +165,11 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
       <div className="pt-4 border-t">
         <div className="flex gap-2">
           <Input
+            key="promtp-input"
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
-            disabled={isLoading}
             className="flex-1"
           />
           <Button
