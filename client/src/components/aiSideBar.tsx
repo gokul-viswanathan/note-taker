@@ -14,6 +14,7 @@ import {
 import { Delta } from "quill";
 import ChatInput from "./aisidebar/ChatInput";
 import { ScrollBar } from "./ui/scroll-area";
+import Markdown from "react-markdown";
 
 interface Message {
   id: number;
@@ -141,7 +142,7 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
                 }`}
               >
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                  {msg.text}
+                  <Markdown>{msg.text.replace(/\\n/g, "\n")}</Markdown>
                 </p>
               </div>
             </div>
