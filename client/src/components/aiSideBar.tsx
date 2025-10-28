@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { Delta } from "quill";
 import ChatInput from "./aisidebar/ChatInput";
+import { ScrollBar } from "./ui/scroll-area";
 
 interface Message {
   id: number;
@@ -112,7 +113,7 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
 
   const ChatContent = () => (
     <>
-      <ScrollArea className="flex-1 pr-4">
+      <ScrollArea className="flex-1 h-72 overflow-y-auto">
         <div className="space-y-4 py-4">
           {messages.map((msg) => (
             <div
@@ -157,6 +158,7 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
             </div>
           )}
         </div>
+        <ScrollBar orientation="vertical" />
       </ScrollArea>
 
       <div className="pt-4 border-t">
@@ -199,7 +201,7 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
     >
       <div
         className={`
-          w-80 h-full flex flex-col p-6
+          w-full h-full flex flex-col p-6
           ${!open ? "invisible" : "visible"}
         `}
       >
