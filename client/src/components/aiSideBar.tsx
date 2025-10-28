@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { apiCall } from "@/services/AiModel";
 import { useStore } from "@/stores/states";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Send, Loader, User, Bot, X } from "lucide-react";
+import { Loader, User, Bot, X } from "lucide-react";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -13,6 +12,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Delta } from "quill";
+import ChatInput from "./aisidebar/ChatInput";
 
 interface Message {
   id: number;
@@ -34,7 +34,6 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
       ? currentFile
       : (currentFile?.path as string);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const isMobile = useIsMobile();
 
@@ -58,7 +57,7 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
     }
   }, [currentFilePath]);
 
-  function handleAsk() {
+  function handleAsk(input: string) {
     if (!input.trim()) return;
     const userMessage = { id: Date.now(), text: input, sender: "user" };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
@@ -67,7 +66,6 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
     //get new data from state vatiables
 
     const currentFileValues = useStore.getState().currentFileContent;
-
     let plainText = "";
     if (currentFileValues) {
       const delta = new Delta(currentFileValues);
@@ -110,7 +108,6 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
     } else {
       setIsLoading(false);
     }
-    setInput("");
   }
 
   const ChatContent = () => (
@@ -164,21 +161,7 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
 
       <div className="pt-4 border-t">
         <div className="flex gap-2">
-          <Input
-            key="promtp-input"
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1"
-          />
-          <Button
-            onClick={handleAsk}
-            disabled={isLoading || !input.trim()}
-            size="icon"
-          >
-            <Send className="w-4 h-4" />
-          </Button>
+          <ChatInput handleAsk={handleAsk} isLoading={isLoading} />
         </div>
         {messages.length > 1 && (
           <Button variant="ghost" size="sm" className="mt-2 w-full text-xs">
