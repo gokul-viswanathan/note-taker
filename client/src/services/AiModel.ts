@@ -1,5 +1,6 @@
+import getBaseUrl from "@/utils/baseURL";
 export async function apiCall(data: string, prompt: string): Promise<string> {
-  const baseUrl = "http://localhost:8080/airesponse";
+  const baseUrl = getBaseUrl() + "/v1/airesponse";
 
   const params = {
     context: data,

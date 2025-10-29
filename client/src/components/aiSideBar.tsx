@@ -1,5 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { apiCall } from "@/services/AiModel";
+import { useStore } from "@/stores/states";
+import { Button } from "@/components/ui/button";
+import { Loader, User, Bot, X } from "lucide-react";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Delta } from "quill";
+import ChatInput from "./aisidebar/ChatInput";
+import { ScrollBar } from "./ui/scroll-area";
+import Markdown from "react-markdown";
 
 interface Message {
   id: number;
@@ -7,16 +22,25 @@ interface Message {
   sender: string;
 }
 
-const AiSideBar: React.FC<{ currentFile: string }> = ({ currentFile }) => {
-  //get AI chat history based on this file
-  //if nothing is there set the below mwssage
-  //it should take effect every time the file changes
+interface AiSideBarProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
 
+const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
+  const currentFile = useStore((state) => state.currentFile);
+
+  const currentFilePath =
+    typeof currentFile === "string"
+      ? currentFile
+      : (currentFile?.path as string);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  // { id: 1, text: "Hello! How can I assist you today?", sender: "bot" }
+  const [isLoading, setIsLoading] = useState(false);
+  const isMobile = useIsMobile();
+
   useEffect(() => {
-    const currentAIPrevChat = localStorage.getItem("chatAi" + currentFile);
+    //get data from github
+    const currentAIPrevChat = localStorage.getItem("chatAi" + currentFilePath);
     if (currentAIPrevChat && currentAIPrevChat !== "") {
       try {
         const parsedMessage = JSON.parse(currentAIPrevChat);
@@ -32,18 +56,26 @@ const AiSideBar: React.FC<{ currentFile: string }> = ({ currentFile }) => {
         { id: 1, text: "Hello! How can I assist you today?", sender: "bot" },
       ]);
     }
-  }, [currentFile]);
+  }, [currentFilePath]);
 
-  //  const [selectedFile, setSelectedFile] = useState(null);
+  function handleAsk(input: string) {
+    if (!input.trim()) return;
+    const userMessage = { id: Date.now(), text: input, sender: "user" };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    setIsLoading(true);
+    const currentFileValues = useStore.getState().currentFileContent;
+    let plainText = "";
+    if (currentFileValues) {
+      const delta = new Delta(currentFileValues);
+      plainText = delta.reduce(
+        (text, op) =>
+          text + (op.insert && typeof op.insert === "string" ? op.insert : ""),
+        "",
+      );
+    }
 
-  function handleAsk() {
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { id: Date.now(), text: input, sender: "user" },
-    ]);
-    const currentFileValues = localStorage.getItem(currentFile);
-    if (input && currentFileValues) {
-      apiCall(currentFileValues, input)
+    if (plainText) {
+      apiCall(plainText, input)
         .then((aiOutput) => {
           if (aiOutput !== null) {
             setMessages((prevMessages) => {
@@ -52,7 +84,7 @@ const AiSideBar: React.FC<{ currentFile: string }> = ({ currentFile }) => {
                 { id: Date.now(), text: aiOutput, sender: "bot" },
               ];
               localStorage.setItem(
-                "chatAi" + currentFile,
+                "chatAi" + currentFilePath,
                 JSON.stringify(updatedMessage),
               );
               return updatedMessage;
@@ -61,41 +93,129 @@ const AiSideBar: React.FC<{ currentFile: string }> = ({ currentFile }) => {
         })
         .catch((error) => {
           console.error("Error in API call:", error);
-        });
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              id: Date.now(),
+              text: "Sorry, something went wrong.",
+              sender: "bot",
+            },
+          ]);
+        })
+        .finally(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
     }
-    setInput("");
   }
 
-  return (
-    <div className="flex flex-col h-screen max-w-2xl mx-auto p-4">
-      <div className="flex-1 overflow-y-auto p-3 rounded-lg space-y-2 shadow-md flex flex-col">
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`p-2 rounded-lg max-w-xs ${msg.sender === "user" ? "bg-[#D8D9DA] text-black self-start" : "bg-[#0F4C75] text-white self-end"}`}
-          >
-            {msg.text}
-          </div>
-        ))}
-      </div>
+  const ChatContent = () => (
+    <>
+      <ScrollArea className="flex-1 h-72 overflow-y-auto">
+        <div className="space-y-4 py-4">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex items-start gap-3 ${
+                msg.sender === "user" ? "flex-row-reverse" : "flex-row"
+              }`}
+            >
+              <div
+                className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                  msg.sender === "bot" ? "bg-primary" : "bg-secondary"
+                }`}
+              >
+                {msg.sender === "bot" ? (
+                  <Bot className="w-4 h-4 text-primary-foreground" />
+                ) : (
+                  <User className="w-4 h-4 text-secondary-foreground" />
+                )}
+              </div>
+              <div
+                className={`p-3 rounded-lg max-w-[70%] break-words ${
+                  msg.sender === "user"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-foreground"
+                }`}
+              >
+                <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                  <Markdown>{msg.text.replace(/\\n/g, "\n")}</Markdown>
+                </div>
+              </div>
+            </div>
+          ))}
+          {isLoading && (
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                <Bot className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <div className="p-3 rounded-lg bg-muted flex items-center gap-2">
+                <Loader className="animate-spin w-4 h-4" />
+                <span className="text-sm">AI is thinking...</span>
+              </div>
+            </div>
+          )}
+        </div>
+        <ScrollBar orientation="vertical" />
+      </ScrollArea>
 
-      {/* Input Field */}
-      <div className="mt-4 flex space-x-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message..."
-          className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button
-          onClick={handleAsk}
-          className="p-2 bg-blue-500 text-white rounded-lg flex items-center hover:bg-blue-600"
-        >
-          Send
-        </button>
+      <div className="pt-4 border-t">
+        <div className="flex gap-2">
+          <ChatInput handleAsk={handleAsk} isLoading={isLoading} />
+        </div>
+        {messages.length > 1 && (
+          <Button variant="ghost" size="sm" className="mt-2 w-full text-xs">
+            Clear Chat
+          </Button>
+        )}
       </div>
-    </div>
+    </>
+  );
+
+  // Mobile: Use Sheet
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="right" className="w-full sm:w-96 p-0">
+          <div className="flex flex-col h-full p-6">
+            <SheetHeader className="pb-4">
+              <SheetTitle>AI Assistant</SheetTitle>
+            </SheetHeader>
+            <ChatContent />
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // Desktop: Use custom sidebar
+  return (
+    <aside
+      className={`
+        border-l bg-background transition-all duration-300 ease-in-out
+        ${open ? "w-100" : "w-0"}
+        overflow-hidden flex-shrink-0
+      `}
+    >
+      <div
+        className={`
+          w-full h-full flex flex-col p-6
+          ${!open ? "invisible" : "visible"}
+        `}
+      >
+        <div className="flex items-center justify-between pb-4 border-b">
+          <h2 className="text-lg font-semibold">AI Assistant</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onOpenChange(false)}
+            className="h-8 w-8"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+        <ChatContent />
+      </div>
+    </aside>
   );
 };
 

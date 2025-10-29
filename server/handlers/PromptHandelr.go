@@ -1,3 +1,4 @@
+// Package handlers provides HTTP handler functions for LLM.
 package handlers
 
 import (
@@ -5,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gokul-viswanathan/note-taker/server/aiServices"
+	"github.com/gokul-viswanathan/note-taker/server/aiservices"
 )
 
 func PromptHandler(c *gin.Context) {
@@ -14,7 +15,7 @@ func PromptHandler(c *gin.Context) {
 
 	fmt.Println("the prompt hander is called")
 
-	aiCallOutput := aiServices.AiCall(data, prompt)
+	aiCallOutput := aiservices.OpenAiCall(data, prompt)
 
-	c.IndentedJSON(http.StatusOK, aiCallOutput)
+	c.JSON(http.StatusOK, aiCallOutput)
 }

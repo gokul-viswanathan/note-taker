@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
-import EditorPage from "@/components/editor/EditorPage";
 import GithubAuthPage from "@/components/oauth/OAuthPage";
+import EditorPage from "@/components/editor/EditorPage";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SidebarProvider } from "@/components/ui/sidebar";
 

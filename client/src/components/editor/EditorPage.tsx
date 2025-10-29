@@ -1,9 +1,12 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useStore } from "@/stores/states";
 import AppSideBar from "@/components/shadcnSidebar/Sidebar";
 import ThoughtInkHeader from "@/components/header/ThoughtInkHeader";
+const AiSideBar = dynamic(() => import("@/components/aiSideBar"), {
+  ssr: false,
+});
 import { FileItem } from "@/types/git-interface";
 import { useTheme } from "@/components/theme/ThemeProvider";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -17,6 +20,7 @@ const MainComponent = () => {
   const currentFile = useStore((state) => state.currentFile);
   const { darkMode, toggleTheme } = useTheme();
   const { toggleSidebar, openMobile } = useSidebar();
+  const [aiSidebarOpen, setAiSidebarOpen] = useState(false);
 
   useEffect(() => {
     const savedFile = localStorage.getItem("currentFile");
@@ -53,6 +57,7 @@ const MainComponent = () => {
         onToggleTheme={() => toggleTheme()}
         onPushToRepo={handlePushToRepo}
         onToggleFileSidebar={toggleSidebar}
+        onToggleAISidebar={() => setAiSidebarOpen(!aiSidebarOpen)}
       />
       <div className="flex flex-1 overflow-hidden">
         <AppSideBar />
@@ -61,6 +66,7 @@ const MainComponent = () => {
         >
           <QuillEditor />
         </div>
+        <AiSideBar open={aiSidebarOpen} onOpenChange={setAiSidebarOpen} />
       </div>
     </div>
   );
