@@ -4,10 +4,12 @@ import dynamic from "next/dynamic";
 import { useStore } from "@/stores/states";
 import AppSideBar from "@/components/shadcnSidebar/Sidebar";
 import ThoughtInkHeader from "@/components/header/ThoughtInkHeader";
+const AiSideBar = dynamic(() => import("@/components/aiSideBar"), {
+  ssr: false,
+});
 import { FileItem } from "@/types/git-interface";
 import { useTheme } from "@/components/theme/ThemeProvider";
 import { useSidebar } from "@/components/ui/sidebar";
-import AiSideBar from "@/components/aiSideBar";
 
 const QuillEditor = dynamic(() => import("@/components/NewQuillEditor"), {
   ssr: false,

@@ -1,5 +1,12 @@
 "use client";
-import { Sun, Moon, Menu, Loader, GitBranch, MessageSquare } from "lucide-react";
+import {
+  Sun,
+  Moon,
+  Menu,
+  Loader,
+  GitBranch,
+  MessageSquare,
+} from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useStore } from "@/stores/states";
 
@@ -105,7 +112,10 @@ const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
 
       {/* Right Section */}
       <div className="flex items-center space-x-2">
-        <button onClick={onToggleAISidebar} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
+        <button
+          onClick={onToggleAISidebar}
+          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+        >
           <MessageSquare className="w-5 h-5" />
         </button>
         <button onClick={onToggleTheme} className="p-1">

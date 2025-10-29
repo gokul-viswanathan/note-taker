@@ -28,7 +28,6 @@ interface AiSideBarProps {
 }
 
 const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
-  console.log("components aiSideBar called");
   const currentFile = useStore((state) => state.currentFile);
 
   const currentFilePath =
@@ -64,9 +63,6 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
     const userMessage = { id: Date.now(), text: input, sender: "user" };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setIsLoading(true);
-    console.log("the backend ai call");
-    //get new data from state vatiables
-
     const currentFileValues = useStore.getState().currentFileContent;
     let plainText = "";
     if (currentFileValues) {
@@ -141,9 +137,9 @@ const AiSideBar: React.FC<AiSideBarProps> = ({ open, onOpenChange }) => {
                     : "bg-muted text-foreground"
                 }`}
               >
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                <div className="text-sm leading-relaxed whitespace-pre-wrap">
                   <Markdown>{msg.text.replace(/\\n/g, "\n")}</Markdown>
-                </p>
+                </div>
               </div>
             </div>
           ))}
