@@ -28,6 +28,7 @@ func main() {
 	router.GET("/api/v1/airesponse", handlers.PromptHandler)
 	router.GET("/api/v1/files", handlers.GetFiles)
 	router.GET("/api/v1/filecontent", handlers.GetFileContent)
+	router.GET("/api/v1/fileversions", handlers.GetFileVersions)
 	router.POST("/api/v1/filecontent", handlers.CreateFiles)
 	router.PUT("/api/v1/folder", handlers.CreateFolder)
 	router.POST("/api/v1/oauth/callback", handlers.OAuthCallback)
