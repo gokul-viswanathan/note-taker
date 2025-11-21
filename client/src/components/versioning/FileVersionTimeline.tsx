@@ -32,7 +32,7 @@ const EmptyState = ({
 }) => {
   if (loading) {
     return (
-      <div className="flex h-full items-center justify-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
         Loading history...
       </div>
     );
@@ -40,14 +40,14 @@ const EmptyState = ({
 
   if (!currentFilePath) {
     return (
-      <div className="flex h-full items-center justify-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
         Select a file to view version history
       </div>
     );
   }
 
   return (
-    <div className="flex h-full items-center justify-center text-sm text-gray-500 dark:text-gray-400">
+    <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
       No versions available yet
     </div>
   );
@@ -85,49 +85,47 @@ const VersionList = ({
   }
 
   return (
-    <ScrollArea className="h-full pr-2">
-      <ul className="relative pl-6">
-        <div className="absolute left-2 top-0 bottom-0 w-px bg-gray-200 dark:bg-gray-700" />
-        {versions.map((version) => {
+    <ScrollArea className="h-full">
+      <ul className="bg-card/80 text-sm shadow-sm">
+        {versions.map((version, index) => {
           const isActive = selectedVersion?.sha === version.sha;
           const versionDate = getVersionDate(version);
+          const rowBorder =
+            index !== versions.length - 1 ? "border-b border-border/50" : "";
           return (
-            <li key={version.sha} className="relative pb-6 last:pb-0">
-              <span
-                className={`absolute left-0 top-2 flex h-3 w-3 items-center justify-center rounded-full border-2 ${isActive ? "border-blue-500 bg-blue-500" : "border-gray-300 bg-white dark:bg-gray-900"}`}
-              />
-              <div className="rounded-md border border-gray-200 bg-white p-3 shadow-sm transition hover:border-blue-300 dark:border-gray-700 dark:bg-gray-900">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {version.message || "No message"}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {getAuthorName(version)}
-                    </p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant={isActive ? "default" : "secondary"}
-                    onClick={() => onViewVersion(version)}
-                  >
-                    View
-                  </Button>
+            <li
+              key={version.sha}
+              className={`px-4 py-3 transition-colors ${rowBorder} ${isActive ? "bg-primary/10 dark:bg-primary/20" : "hover:bg-muted/60"}`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1">
+                  <p className="font-semibold text-foreground">
+                    {version.message || "No message"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {getAuthorName(version)}
+                  </p>
                 </div>
-                <div className="mt-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                  <span
-                    className="truncate"
-                    title={version.sha}
-                  >{`${version.sha?.slice(0, 7) || "N/A"}`}</span>
-                  {versionDate && (
-                    <span>
-                      {new Date(versionDate).toLocaleString(undefined, {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}
-                    </span>
-                  )}
-                </div>
+                <Button
+                  size="sm"
+                  variant={isActive ? "default" : "secondary"}
+                  onClick={() => onViewVersion(version)}
+                >
+                  View
+                </Button>
+              </div>
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+                <span className="font-mono uppercase tracking-wide">
+                  {version.sha?.slice(0, 7) || "N/A"}
+                </span>
+                {versionDate && (
+                  <span>
+                    {new Date(versionDate).toLocaleString(undefined, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
+                  </span>
+                )}
               </div>
             </li>
           );
@@ -216,7 +214,7 @@ const FileVersionTimeline: React.FC<FileVersionTimelineProps> = (props) => {
 
   return (
     <aside
-      className={`border-l bg-background transition-all duration-300 ease-in-out ${props.open ? "w-96" : "w-0"} overflow-hidden`}
+      className={`border-l border-border/60 bg-card/85 shadow-lg shadow-black/5 backdrop-blur transition-all duration-300 ease-in-out ${props.open ? "w-96" : "w-0"} overflow-hidden`}
     >
       {props.open && <PanelContent {...props} />}
     </aside>
