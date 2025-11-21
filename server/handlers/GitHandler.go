@@ -67,12 +67,16 @@ func GetFileContent(c *gin.Context) {
 	repo := c.Query("repo")
 	path := c.Query("subpath") //path with the file name to get content
 	authHeader := c.GetHeader("Authorization")
+	sha := c.Query("sha")
+
+	fmt.Println("the value of sha ", sha)
+
 	token := ""
 	if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
 		token = strings.TrimPrefix(authHeader, "Bearer ")
 	}
 
-	resp, err := gh.FileContent(c, user, repo, token, path)
+	resp, err := gh.FileContent(c, user, repo, token, path, sha)
 	if err != nil {
 		fmt.Println("Error occured during getting file content ", err)
 		c.IndentedJSON(http.StatusBadGateway, "error happended")
