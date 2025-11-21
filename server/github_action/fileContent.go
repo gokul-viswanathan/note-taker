@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -21,18 +22,20 @@ type FileContentStruct struct {
 	Content string `json:"content"`
 }
 
-func FileContent(ctx context.Context, owner string, repo string, token string, path string) (FileContentStruct, error) {
+func FileContent(ctx context.Context, owner, repo, token, path, sha string) (FileContentStruct, error) {
 
-	fmt.Print("the variables are ", owner, repo, token, path)
-	// Validate inputs
 	if owner == "" || repo == "" || token == "" || path == "" {
 		return FileContentStruct{}, fmt.Errorf("owner, repo, token, and path are required")
 	}
 	path = strings.Trim(path, "/")
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
-	fmt.Print("the URL is ", url)
+	endpoint := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
+	if sha != "" {
+		params := url.Values{}
+		params.Set("ref", sha)
+		endpoint = endpoint + "?" + params.Encode()
+	}
 	// Create request with context
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", endpoint, nil)
 	if err != nil {
 		return FileContentStruct{}, fmt.Errorf("failed to create request: %w", err)
 	}
