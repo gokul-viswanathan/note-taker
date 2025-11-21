@@ -1,7 +1,7 @@
 import getBaseURL from "@/utils/baseURL";
 import { getGithubConfig } from "@/utils/storage";
 
-const fetchFileContent = async (path: string) => {
+const fetchFileContent = async (path: string, sha?: string) => {
   const baseURL = getBaseURL();
   const githubConfig = getGithubConfig();
   if (!githubConfig?.username || !githubConfig?.repo || !githubConfig?.token) {
@@ -9,7 +9,8 @@ const fetchFileContent = async (path: string) => {
   }
   const { username, repo, token } = githubConfig;
   const subpath = path.split("/").map(encodeURIComponent).join("/");
-  const url = `${baseURL}/v1/filecontent?username=${username}&repo=${repo}&subpath=${subpath}`;
+  const shaParam = sha ? `&sha=${sha}` : "";
+  const url = `${baseURL}/v1/filecontent?username=${username}&repo=${repo}&subpath=${subpath}${shaParam}`;
 
   try {
     const response = await fetch(url, {
