@@ -19,6 +19,8 @@ interface BearState {
   setIsContextMenuOpen?: (isOpen: boolean) => void;
   contextMenuItem?: FileItem | null;
   setContextMenuItem?: (item: FileItem | null) => void;
+  fileTreeVersion: number;
+  triggerFileTreeRefresh: () => void;
 }
 
 export const useStore = create<BearState>((set) => ({
@@ -49,4 +51,8 @@ export const useStore = create<BearState>((set) => ({
   setIsContextMenuOpen: (isOpen: boolean) => set({ isContextMenuOpen: isOpen }),
   contextMenuItem: null,
   setContextMenuItem: (item: FileItem | null) => set({ contextMenuItem: item }),
+  //file tree refresh trigger
+  fileTreeVersion: 0,
+  triggerFileTreeRefresh: () =>
+    set((state) => ({ fileTreeVersion: state.fileTreeVersion + 1 })),
 }));

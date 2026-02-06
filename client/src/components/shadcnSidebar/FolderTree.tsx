@@ -22,6 +22,7 @@ const FolderTree: React.FC = () => {
   );
   const isCreateFileOpen = useStore((state) => state.isCreateFileOpen);
   const isCreateFolderOpen = useStore((state) => state.isCreateFolderOpen);
+  const fileTreeVersion = useStore((state) => state.fileTreeVersion);
 
   const fetchFolderContents = useCallback(async (folderPath: string) => {
     try {
@@ -68,6 +69,13 @@ const FolderTree: React.FC = () => {
   useEffect(() => {
     fetchFolderContents("");
   }, [fetchFolderContents]);
+
+  // Refetch file tree when version changes (triggered by create/delete operations)
+  useEffect(() => {
+    if (fileTreeVersion > 0) {
+      fetchFolderContents("");
+    }
+  }, [fileTreeVersion, fetchFolderContents]);
 
   const handleFileCreated = () => {
     fetchFolderContents("");
