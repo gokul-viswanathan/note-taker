@@ -45,11 +45,11 @@ const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
     currentFile?.split("/").pop() || currentFile || "untitled.md";
 
   return (
-    <div className="flex items-center justify-between px-4 py-2 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+    <div className="flex items-center justify-between px-4 py-2 bg-card border-b border-border">
       <div className="flex items-center space-x-4">
         <Menu
           onClick={onToggleFileSidebar}
-          className="p-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+          className="p-1 cursor-pointer hover:bg-muted rounded"
         />
         {isMobile ? (
           <div className="text-lg font-semibold">T I</div>
@@ -60,18 +60,18 @@ const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
 
       <div className="flex items-center space-x-2 text-sm">
         <div className="group relative">
-          <div className="flex max-w-xs flex-row rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 dark:border-gray-700 dark:bg-gray-800/70 md:max-w-md">
-            <span className="text-sm text-gray-400 dark:text-gray-500">
+          <div className="flex max-w-xs flex-row rounded-xl border border-input bg-muted px-3 py-2 md:max-w-md">
+            <span className="text-sm text-muted-foreground">
               Current Path {" : "}
             </span>
-            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 line-clamp-1">
+            <span className="text-sm font-semibold text-foreground line-clamp-1">
               <span className="hidden md:inline">
                 {formatPath(currentFile)}
               </span>
               <span className="md:hidden">{fileName}</span>
             </span>
           </div>
-          <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block rounded bg-gray-900 py-1 px-2 text-xs text-white shadow-lg dark:bg-gray-700">
+          <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block rounded bg-primary py-1 px-2 text-xs text-primary-foreground shadow-lg">
             {formatPath(currentFile)}
           </div>
         </div>
@@ -79,7 +79,7 @@ const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
         <div className="flex items-center space-x-2">
           <button
             onClick={onToggleHistorySidebar}
-            className="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 shadow-sm"
+            className="flex items-center space-x-2 px-3 py-1.5 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors duration-200 shadow-sm"
           >
             <History className="w-4 h-4" />
             <span>History</span>
@@ -107,7 +107,7 @@ const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
       <div className="flex items-center space-x-2">
         <button
           onClick={onToggleAISidebar}
-          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+          className="p-1 hover:bg-muted rounded"
         >
           <MessageSquare className="w-5 h-5" />
         </button>

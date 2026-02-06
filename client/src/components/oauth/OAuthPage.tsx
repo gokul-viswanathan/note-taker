@@ -18,20 +18,12 @@ const GitHubAuthPage = () => {
 
   return (
     <div
-      className={`min-h-screen transition-all duration-500 ${
-        darkMode
-          ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
-          : "bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"
-      }`}
+      className="min-h-screen transition-all duration-500 bg-background"
     >
       {/* Theme Toggle */}
       <button
         onClick={toggleTheme}
-        className={`fixed top-6 right-6 p-3 rounded-full transition-all duration-300 hover:scale-110 z-10 ${
-          darkMode
-            ? "bg-gray-800 text-yellow-400 hover:bg-gray-700 shadow-lg shadow-gray-900/20"
-            : "bg-white text-gray-600 hover:bg-gray-50 shadow-lg shadow-gray-200/50"
-        }`}
+        className="fixed top-6 right-6 p-3 rounded-full transition-all duration-300 hover:scale-110 z-10 bg-muted text-accent-foreground hover:bg-muted/80 shadow-lg"
       >
         {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
       </button>
@@ -52,18 +44,14 @@ const GitHubAuthPage = () => {
                   <Sparkles className="w-8 h-8 text-white" />
                 </div>
                 <h1
-                  className={`text-4xl font-bold ${
-                    darkMode ? "text-white" : "text-gray-900"
-                  }`}
+                  className="text-4xl font-bold text-foreground"
                 >
                   ThoughtInk
                 </h1>
               </div>
 
               <h2
-                className={`text-3xl lg:text-4xl font-bold leading-tight ${
-                  darkMode ? "text-white" : "text-gray-900"
-                }`}
+                className="text-3xl lg:text-4xl font-bold leading-tight text-foreground"
               >
                 Welcome to the future of{" "}
                 <span
@@ -78,9 +66,7 @@ const GitHubAuthPage = () => {
               </h2>
 
               <p
-                className={`text-lg ${
-                  darkMode ? "text-gray-300" : "text-gray-600"
-                }`}
+                className="text-lg text-muted-foreground"
               >
                 Connect with GitHub to unlock powerful features and keep your
                 notes synchronized across all your devices.
@@ -91,32 +77,22 @@ const GitHubAuthPage = () => {
           {/* Right Side - Auth Card */}
           <div className="flex justify-center lg:justify-end">
             <div
-              className={`w-full max-w-md p-8 rounded-3xl transition-all duration-500 ${
-                darkMode
-                  ? "bg-gray-800/80 backdrop-blur-xl border border-gray-700/50 shadow-2xl shadow-gray-900/20"
-                  : "bg-white/80 backdrop-blur-xl border border-gray-200/50 shadow-2xl shadow-gray-900/10"
-              }`}
+              className="w-full max-w-md p-8 rounded-3xl transition-all duration-500 bg-card/80 backdrop-blur-xl border border-border/50 shadow-2xl"
             >
               {/* GitHub Logo */}
               <div className="text-center mb-8">
                 <div
-                  className={`inline-flex p-4 rounded-full mb-4 ${
-                    darkMode
-                      ? "bg-gradient-to-r from-gray-700 to-gray-600"
-                      : "bg-gradient-to-r from-gray-800 to-gray-900"
-                  } shadow-lg`}
+                  className="inline-flex p-4 rounded-full mb-4 bg-primary shadow-lg"
                 >
-                  <Github className="w-12 h-12 text-white" />
+                  <Github className="w-12 h-12 text-primary-foreground" />
                 </div>
                 <h3
-                  className={`text-2xl font-bold mb-2 ${
-                    darkMode ? "text-white" : "text-gray-900"
-                  }`}
+                  className="text-2xl font-bold mb-2 text-foreground"
                 >
                   Connect with GitHub
                 </h3>
                 <p
-                  className={`${darkMode ? "text-gray-400" : "text-gray-600"}`}
+                  className="text-muted-foreground"
                 >
                   Sign in securely to get started
                 </p>
@@ -126,11 +102,7 @@ const GitHubAuthPage = () => {
               <button
                 onClick={handleGitHubAuth}
                 disabled={isLoading}
-                className={`w-full py-4 px-6 rounded-xl font-semibold text-white transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:scale-100 disabled:opacity-70 flex items-center justify-center space-x-3 ${
-                  darkMode
-                    ? "bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 shadow-lg shadow-gray-900/30"
-                    : "bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 shadow-lg shadow-gray-900/25"
-                }`}
+                className="w-full py-4 px-6 rounded-xl font-semibold text-primary-foreground transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:scale-100 disabled:opacity-70 flex items-center justify-center space-x-3 bg-primary hover:bg-primary/90 shadow-lg"
               >
                 {isLoading ? (
                   <>
@@ -147,30 +119,20 @@ const GitHubAuthPage = () => {
 
               {/* Security Note */}
               <div
-                className={`mt-6 p-4 rounded-xl ${
-                  darkMode
-                    ? "bg-gray-700/30 border border-gray-600/30"
-                    : "bg-gray-50/70 border border-gray-200/50"
-                }`}
+                className="mt-6 p-4 rounded-xl bg-muted/30 border border-border/50"
               >
                 <div className="flex items-start space-x-3">
                   <Shield
-                    className={`w-5 h-5 mt-0.5 ${
-                      darkMode ? "text-green-400" : "text-green-600"
-                    }`}
+                    className="w-5 h-5 mt-0.5 text-accent-foreground"
                   />
                   <div>
                     <p
-                      className={`text-sm font-medium ${
-                        darkMode ? "text-white" : "text-gray-900"
-                      }`}
+                      className="text-sm font-medium text-foreground"
                     >
                       Secure Authentication
                     </p>
                     <p
-                      className={`text-xs mt-1 ${
-                        darkMode ? "text-gray-400" : "text-gray-600"
-                      }`}
+                      className="text-xs mt-1 text-muted-foreground"
                     >
                       We only request minimal permissions needed to sync your
                       notes. Your data stays private and secure.
@@ -181,25 +143,19 @@ const GitHubAuthPage = () => {
 
               {/* Terms */}
               <p
-                className={`text-center text-xs mt-6 ${
-                  darkMode ? "text-gray-500" : "text-gray-500"
-                }`}
+                className="text-center text-xs mt-6 text-muted-foreground"
               >
                 By continuing, you agree to our{" "}
                 <a
                   href="#"
-                  className={`underline hover:no-underline ${
-                    darkMode ? "text-purple-400" : "text-blue-600"
-                  }`}
+                  className="underline hover:no-underline text-primary"
                 >
                   Terms of Service
                 </a>{" "}
                 and{" "}
                 <a
                   href="#"
-                  className={`underline hover:no-underline ${
-                    darkMode ? "text-purple-400" : "text-blue-600"
-                  }`}
+                  className="underline hover:no-underline text-primary"
                 >
                   Privacy Policy
                 </a>

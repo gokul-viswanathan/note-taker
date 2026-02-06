@@ -13,7 +13,7 @@ const FileIcon = () => {
   const getFileIcon = () => {
     // You can extend this logic to return different Lucide icons based on fileName
     // For example, FileText for .txt, FileCode for .js/.ts, etc.
-    return <File className="w-4 h-4 mr-2 text-gray-400" color="currentColor" />;
+    return <File className="w-4 h-4 mr-2 text-muted-foreground" color="currentColor" />;
   };
   return getFileIcon();
 };
