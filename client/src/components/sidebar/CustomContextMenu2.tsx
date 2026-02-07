@@ -22,7 +22,7 @@ const ContextMenuDemo: React.FC = () => {
     if (contextMenuItem) {
       try {
         await deleteFileOrFolder(contextMenuItem);
-        // setIsDeleteDialogOpen?.(false);
+        useStore.getState().triggerFileTreeRefresh();
       } catch (error) {
         console.error("Failed to delete item:", error);
       }

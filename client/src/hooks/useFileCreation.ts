@@ -22,6 +22,7 @@ export const useFileCreation = ({
     try {
       await createNewFolder(pathOfNewFolder);
       handleCancel();
+      useStore.getState().triggerFileTreeRefresh();
       onSuccess?.();
     } catch (error) {
       console.error("Failed to create folder:", error);
@@ -39,6 +40,7 @@ export const useFileCreation = ({
       await updateFileContent(newFile, null);
       useStore.getState().setCurrentFile?.(newFile);
       handleCancel();
+      useStore.getState().triggerFileTreeRefresh();
       onSuccess?.();
     } catch (error) {
       console.error("Failed to create file:", error);

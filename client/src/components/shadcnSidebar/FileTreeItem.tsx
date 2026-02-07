@@ -90,7 +90,7 @@ const FileTreeItem: React.FC<FileTreeProp> = ({
                 className={`h-4 w-4 transition-transform ${expandedFolders.has(item.path) ? "rotate-90" : ""}`}
               />
               <Folder className="h-4 w-4" />
-              <span>{item.name}</span>
+              <span className="text-base">{item.name}</span>
             </SidebarMenuButton>
           </CollapsibleTrigger>
 
@@ -137,7 +137,7 @@ const FileTreeItem: React.FC<FileTreeProp> = ({
         }}
       >
         <File className="h-4 w-4" />
-        <span>{item.name}</span>
+        <span className="text-base">{item.name}</span>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );

@@ -3,11 +3,13 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	gh "github.com/gokul-viswanathan/note-taker/server/github_action"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	gh "github.com/gokul-viswanathan/note-taker/server/github_action"
 )
 
 type OAuthRequest struct {
@@ -65,12 +67,16 @@ func GetFileContent(c *gin.Context) {
 	repo := c.Query("repo")
 	path := c.Query("subpath") //path with the file name to get content
 	authHeader := c.GetHeader("Authorization")
+	sha := c.Query("sha")
+
+	fmt.Println("the value of sha ", sha)
+
 	token := ""
 	if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
 		token = strings.TrimPrefix(authHeader, "Bearer ")
 	}
 
-	resp, err := gh.FileContent(c, user, repo, token, path)
+	resp, err := gh.FileContent(c, user, repo, token, path, sha)
 	if err != nil {
 		fmt.Println("Error occured during getting file content ", err)
 		c.IndentedJSON(http.StatusBadGateway, "error happended")
@@ -78,6 +84,39 @@ func GetFileContent(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, resp)
+}
+
+func GetFileVersions(c *gin.Context) {
+	user := c.Query("username")
+	repo := c.Query("repo")
+	path := c.Query("subpath")
+	if path == "" {
+		path = c.Query("path")
+	}
+	branch := c.Query("branch")
+
+	limit := 20
+	if limitParam := c.Query("limit"); limitParam != "" {
+		if parsed, err := strconv.Atoi(limitParam); err == nil {
+			limit = parsed
+		}
+	}
+
+	authHeader := c.GetHeader("Authorization")
+	token := ""
+	if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
+		token = strings.TrimPrefix(authHeader, "Bearer ")
+	}
+
+	fmt.Println("reached the version controller")
+	versions, err := gh.FileVersions(c.Request.Context(), user, repo, token, path, branch, limit)
+	if err != nil {
+		fmt.Println("Error occured while getting file versions ", err)
+		c.IndentedJSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, versions)
 }
 
 type RequestBody struct {
