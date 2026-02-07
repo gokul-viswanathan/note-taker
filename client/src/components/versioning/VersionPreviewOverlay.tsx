@@ -22,24 +22,24 @@ interface VersionPreviewOverlayProps {
 const DiffList = ({ segments }: { segments: DiffSegment[] }) => {
   if (!segments.length) {
     return (
-      <div className="flex flex-1 items-center justify-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
         Nothing to compare yet
       </div>
     );
   }
 
   return (
-    <div className="flex-1 overflow-auto rounded-md border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
-      <ul className="divide-y divide-gray-100 text-sm font-mono dark:divide-gray-800">
+    <div className="flex-1 overflow-auto rounded-md border border-border bg-card">
+      <ul className="divide-y divide-border text-sm font-mono">
         {segments.map((segment, index) => (
           <li
             key={`${segment.type}-${index}`}
             className={`whitespace-pre-wrap px-3 py-1 ${
               segment.type === "added"
-                ? "bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-300"
+                ? "bg-accent/10 text-accent-foreground"
                 : segment.type === "removed"
-                  ? "bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-300"
-                  : "text-gray-800 dark:text-gray-100"
+                  ? "bg-destructive/10 text-destructive"
+                  : "text-foreground"
             }`}
           >
             <span className="mr-2 text-xs opacity-70">
@@ -89,14 +89,14 @@ const VersionPreviewOverlay: React.FC<VersionPreviewOverlayProps> = ({
   const versionDate = getVersionDate(version);
 
   return (
-    <div className="absolute inset-0 z-20 flex flex-col bg-white/95 backdrop-blur dark:bg-gray-900/95">
-      <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-800">
+    <div className="absolute inset-0 z-20 flex flex-col bg-background/95 backdrop-blur">
+      <div className="flex items-center justify-between border-b border-border px-6 py-4">
         <div>
           <p className="text-lg font-semibold">
             {mode === "diff" ? "Diff View" : "Version Preview"}
           </p>
           {version && (
-            <div className="text-xs text-gray-600 dark:text-gray-300">
+            <div className="text-xs text-muted-foreground">
               <p>{version.message}</p>
               <p className="flex space-x-2 truncate">
                 <span>{getAuthorName(version)}</span>
@@ -135,17 +135,17 @@ const VersionPreviewOverlay: React.FC<VersionPreviewOverlayProps> = ({
 
       <div className="flex flex-1 flex-col p-6">
         {isLoading ? (
-          <div className="flex flex-1 items-center justify-center text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
             Loading version...
           </div>
         ) : mode === "diff" ? (
           <DiffList segments={diffSegments} />
         ) : (
-          <div className="flex-1 overflow-auto rounded-md border border-gray-200 bg-white p-4 font-mono text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-200">
+          <div className="flex-1 overflow-auto rounded-md border border-border bg-card p-4 font-mono text-sm text-foreground">
             {content ? (
               <pre className="whitespace-pre-wrap">{content}</pre>
             ) : (
-              <p className="text-center text-gray-500 dark:text-gray-400">
+              <p className="text-center text-muted-foreground">
                 No content available for this version
               </p>
             )}

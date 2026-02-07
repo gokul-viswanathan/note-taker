@@ -66,8 +66,8 @@ const ResizableSidebar: React.FC<Props> = ({
       <div
         onMouseDown={startResizing}
         className={`absolute top-0 h-full w-0.5 cursor-ew-resize
-  bg-gray-700 dark:bg-gray-300
-  hover:bg-gray-400 hover:dark:bg-gray-500
+  bg-border
+  hover:bg-muted-foreground
   hover:w-1
   ${side === "left" ? "right-0" : "left-0"}`}
       />

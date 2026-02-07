@@ -29,7 +29,7 @@ const CreateInputField: React.FC<CreateInputFieldProps> = ({
       <button
         onClick={onCancel}
         aria-label="Cancel"
-        className="text-red-500 hover:text-red-700"
+        className="text-destructive hover:text-destructive/80"
       >
         <XIcon size={16} />
       </button>

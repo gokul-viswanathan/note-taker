@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   Sun,
   Moon,
@@ -7,18 +7,18 @@ import {
   GitBranch,
   MessageSquare,
   History,
-} from "lucide-react"
-import { useIsMobile } from "@/hooks/use-mobile"
-import { useStore } from "@/stores/states"
+} from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useStore } from "@/stores/states";
 
 interface ThoughtInkHeaderProps {
-  currentFile?: string
-  darkMode: boolean
-  onToggleTheme: () => void
-  onPushToRepo: () => void
-  onToggleFileSidebar: () => void
-  onToggleAISidebar: () => void
-  onToggleHistorySidebar: () => void
+  currentFile?: string;
+  darkMode: boolean;
+  onToggleTheme: () => void;
+  onPushToRepo: () => void;
+  onToggleFileSidebar: () => void;
+  onToggleAISidebar: () => void;
+  onToggleHistorySidebar: () => void;
 }
 
 const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
@@ -31,23 +31,25 @@ const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
   onToggleHistorySidebar,
 }) => {
   const formatPath = (path: string) => {
-    if (!path) return "No file selected"
-    const parts = path.split("/")
-    if (parts.length <= 1) return path
-    const folder = parts.slice(0, -1).join("/")
-    const file = parts[parts.length - 1]
-    return `${folder}/${file}`
-  }
+    if (!path) return "No file selected";
+    const parts = path.split("/");
+    if (parts.length <= 1) return path;
+    const folder = parts.slice(0, -1).join("/");
+    const file = parts[parts.length - 1];
+    return `${folder}/${file}`;
+  };
 
-  const isMobile = useIsMobile()
-  const isPushingNoteToGithub = useStore((state) => state.saveFile)
+  const isMobile = useIsMobile();
+  const isPushingNoteToGithub = useStore((state) => state.saveFile);
+  const fileName =
+    currentFile?.split("/").pop() || currentFile || "untitled.md";
 
   return (
-    <div className="flex items-center justify-between px-4 py-2 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+    <div className="flex items-center justify-between px-4 py-2 bg-card border-b border-border">
       <div className="flex items-center space-x-4">
         <Menu
           onClick={onToggleFileSidebar}
-          className="p-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+          className="p-1 cursor-pointer hover:bg-muted rounded"
         />
         {isMobile ? (
           <div className="text-lg font-semibold">T I</div>
@@ -58,13 +60,18 @@ const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
 
       <div className="flex items-center space-x-2 text-sm">
         <div className="group relative">
-          <span className="text-gray-600 dark:text-gray-400 truncate max-w-[200px] md:max-w-md inline-block">
-            <span className="hidden md:inline">{formatPath(currentFile)}</span>
-            <span className="md:hidden">
-              {currentFile?.split("/").pop() || ""}
+          <div className="flex max-w-xs flex-row rounded-xl border border-input bg-muted px-3 py-2 md:max-w-md">
+            <span className="text-sm text-muted-foreground">
+              Current Path {" : "}
             </span>
-          </span>
-          <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-900 dark:bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
+            <span className="text-sm font-semibold text-foreground line-clamp-1">
+              <span className="hidden md:inline">
+                {formatPath(currentFile)}
+              </span>
+              <span className="md:hidden">{fileName}</span>
+            </span>
+          </div>
+          <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block rounded bg-primary py-1 px-2 text-xs text-primary-foreground shadow-lg">
             {formatPath(currentFile)}
           </div>
         </div>
@@ -72,7 +79,7 @@ const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
         <div className="flex items-center space-x-2">
           <button
             onClick={onToggleHistorySidebar}
-            className="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 shadow-sm"
+            className="flex items-center space-x-2 px-3 py-1.5 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors duration-200 shadow-sm"
           >
             <History className="w-4 h-4" />
             <span>History</span>
@@ -100,7 +107,7 @@ const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
       <div className="flex items-center space-x-2">
         <button
           onClick={onToggleAISidebar}
-          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+          className="p-1 hover:bg-muted rounded"
         >
           <MessageSquare className="w-5 h-5" />
         </button>
@@ -113,7 +120,7 @@ const ThoughtInkHeader: React.FC<ThoughtInkHeaderProps> = ({
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ThoughtInkHeader
+export default ThoughtInkHeader;
